@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>设计规范 · 环球驿站</title>
+<style>
+  :root{
+    --brand-green:#006241; --brand-deep:#1E3932; --brand-cream:#F7F4EE;
+    --accent-gold:#CBA258; --travel-blue:#2577E3;
+    --text-primary:#1E3932; --text-secondary:#6B7B74; --divider:#E8E3D8;
+    --st-ongoing:#3D7A5F; --st-pending:#A87B2F; --st-error:#A5483D;
+    --shadow-card:0 4px 16px rgba(30,57,50,.06);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+  body{background:#EAE6DC;color:var(--text-primary);padding:0 0 60px}
+  .ico{width:20px;height:20px;display:inline-block;vertical-align:middle}
+  .ico.sm{width:16px;height:16px}
+  /* ===== 页头：纯色深墨绿 ===== */
+  .g-hero{background:var(--brand-deep);padding:52px 48px 44px;position:relative}
+  .g-hero .mark{display:flex;align-items:center;gap:14px;position:relative;z-index:1}
+  .g-hero .logo{width:56px;height:56px;border-radius:50%;background:var(--brand-green);display:flex;align-items:center;justify-content:center;color:var(--brand-cream)}
+  .g-hero .logo .ico{width:28px;height:28px}
+  .g-hero .bn{color:var(--brand-cream);font-size:20px;font-weight:600;letter-spacing:2px}
+  .g-hero .bn small{display:block;font-size:12px;color:rgba(247,244,238,.55);font-weight:400;letter-spacing:4px;margin-top:5px}
+  .g-hero h1{color:var(--brand-cream);font-size:20px;font-weight:600;margin-top:26px;position:relative;z-index:1}
+  .g-hero .sub{color:rgba(247,244,238,.75);font-size:14px;margin-top:10px;line-height:1.9;max-width:780px;position:relative;z-index:1}
+  .g-hero .sub em{font-style:normal;color:var(--brand-cream);border-bottom:1px solid rgba(247,244,238,.45);padding-bottom:1px}
+  .g-hero .ver{display:inline-block;margin-top:16px;font-size:12px;color:var(--brand-cream);border:1px solid rgba(247,244,238,.4);border-radius:999px;padding:4px 14px;letter-spacing:1px}
+  .g-hero .back{position:absolute;top:24px;right:32px;font-size:12px;color:var(--brand-cream);text-decoration:none;border:1px solid rgba(247,244,238,.4);border-radius:999px;padding:5px 14px;z-index:2}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 32px}
+  section{margin-top:44px}
+  .sec-h{display:flex;align-items:baseline;gap:12px;border-bottom:2px solid var(--divider);padding-bottom:10px;margin-bottom:20px}
+  .sec-h .no{font-size:13px;color:var(--brand-green);font-weight:600;letter-spacing:1px}
+  .sec-h h2{font-size:20px;font-weight:600;color:var(--brand-deep)}
+  .sec-h .en{font-size:12px;color:var(--text-secondary);letter-spacing:2px}
+  .note{background:#fff;border-radius:12px;box-shadow:var(--shadow-card);padding:14px 18px;font-size:14px;color:var(--text-secondary);line-height:1.9;margin-bottom:18px}
+  .note b{color:var(--brand-green);font-weight:600}
+  .note .ratio{display:inline-block;font-weight:600;color:var(--brand-deep);background:var(--brand-cream);border-radius:6px;padding:0 8px;margin:0 2px}
+  /* ===== 色板 ===== */
+  .swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+  .sw{background:#fff;border-radius:12px;overflow:hidden;box-shadow:var(--shadow-card)}
+  .sw .chip{height:76px;position:relative}
+  .sw .chip .hex{position:absolute;right:10px;bottom:8px;font-size:12px;font-weight:600;font-variant-numeric:tabular-nums;background:rgba(255,255,255,.85);border-radius:6px;padding:2px 8px;color:var(--brand-deep)}
+  .sw .chip.light .hex{background:rgba(30,57,50,.75);color:var(--brand-cream)}
+  .sw .meta{padding:12px 14px}
+  .sw .tk{font-size:12px;font-weight:600;color:var(--brand-green);font-family:ui-monospace,Menlo,monospace}
+  .sw .use{font-size:12px;color:var(--text-secondary);margin-top:5px;line-height:1.6}
+  /* ===== 字体层级 ===== */
+  .type-card{background:#fff;border-radius:12px;box-shadow:var(--shadow-card);padding:8px 24px}
+  .trow{display:flex;align-items:baseline;gap:20px;padding:16px 0;border-bottom:1px dashed var(--divider)}
+  .trow:last-child{border-bottom:none}
+  .trow .spec{width:190px;flex-shrink:0;font-size:12px;color:var(--text-secondary);line-height:1.6}
+  .trow .spec b{display:block;color:var(--brand-green);font-family:ui-monospace,Menlo,monospace;font-size:12px;font-weight:600}
+  .trow .num{font-variant-numeric:tabular-nums}
+  /* ===== 圆角/阴影 ===== */
+  .shape-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+  .shape{background:#fff;box-shadow:var(--shadow-card);padding:22px;text-align:center;border-radius:12px}
+  .shape .demo{margin:0 auto 12px;background:var(--brand-deep)}
+  .shape .nm{font-size:14px;font-weight:600}
+  .shape .vl{font-size:12px;color:var(--text-secondary);margin-top:5px;font-family:ui-monospace,Menlo,monospace}
+  /* ===== 图标系统 ===== */
+  .icon-card{background:#fff;border-radius:12px;box-shadow:var(--shadow-card);padding:8px 10px 4px}
+  .icon-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr))}
+  .icell{text-align:center;padding:16px 6px 14px;border-radius:8px;transition:background .2s}
+  .icell:hover{background:var(--brand-cream)}
+  .icell .ib{width:44px;height:44px;margin:0 auto 8px;border-radius:50%;background:var(--brand-cream);display:flex;align-items:center;justify-content:center;color:var(--brand-deep)}
+  .icell .ib .ico{width:22px;height:22px}
+  .icell .inm{font-size:12px;color:var(--text-secondary)}
+  .icell .ien{font-size:10px;color:#B9B2A2;font-family:ui-monospace,Menlo,monospace;margin-top:2px}
+  .icon-spec{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+  .icon-spec span{font-size:12px;color:var(--text-secondary);background:var(--brand-cream);border-radius:6px;padding:4px 12px;font-family:ui-monospace,Menlo,monospace}
+  /* ===== 组件样例 ===== */
+  .comp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+  .comp{background:#fff;border-radius:12px;box-shadow:var(--shadow-card);padding:20px}
+  .comp .cn{font-size:12px;font-weight:600;color:var(--brand-green);margin-bottom:14px}
+  .comp .cn small{color:var(--text-secondary);font-weight:400;margin-left:8px}
+  .btn-main{display:inline-block;background:var(--brand-green);color:var(--brand-cream);border-radius:999px;font-size:14px;padding:11px 28px;font-weight:600;letter-spacing:1px;transition:opacity .2s}
+  .btn-main:hover{opacity:.92}
+  .btn-line{display:inline-block;border:1.5px solid var(--brand-green);color:var(--brand-green);border-radius:999px;font-size:14px;padding:9px 22px}
+  .btn-dis{display:inline-block;background:#C9C2B2;color:#F2EEE4;border-radius:999px;font-size:14px;padding:11px 28px}
+  .tag{display:inline-block;font-size:12px;border-radius:6px;padding:2px 10px;margin:0 8px 8px 0}
+  .tag-green{color:var(--brand-green);border:1px solid rgba(0,98,65,.3);background:rgba(0,98,65,.05)}
+  .tag-gray{color:var(--text-secondary);border:1px solid var(--divider)}
+  .st{display:inline-block;font-size:12px;font-weight:600;border-radius:999px;padding:2px 10px;margin:0 8px 8px 0}
+  .st-ongoing{color:var(--st-ongoing);background:rgba(61,122,95,.10)}
+  .st-pending{color:var(--st-pending);background:rgba(168,123,47,.10)}
+  .st-error{color:var(--st-error);background:rgba(165,72,61,.10)}
+  /* ===== 四大隐喻 ===== */
+  .meta-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(480px,1fr));gap:18px}
+  .metaphor{background:#fff;border-radius:12px;box-shadow:var(--shadow-card);overflow:hidden}
+  .metaphor .m-hd{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid #F0EBE0}
+  .metaphor .m-no{width:26px;height:26px;border-radius:50%;background:var(--brand-deep);color:var(--brand-cream);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600}
+  .metaphor .m-t{font-size:16px;font-weight:600;color:var(--brand-deep)}
+  .metaphor .m-t small{color:var(--text-secondary);font-weight:400;font-size:12px;margin-left:8px}
+  .metaphor .m-bd{padding:18px;background:var(--brand-cream)}
+  .metaphor .m-desc{padding:12px 18px 16px;font-size:12px;color:var(--text-secondary);line-height:1.9}
+  .metaphor .m-desc b{color:var(--brand-green);font-weight:600}
+  /* 隐喻1 登机牌 */
+  .bp-demo{display:flex;background:#fff;border-radius:12px;box-shadow:var(--shadow-card);overflow:hidden}
+  .bp-demo .l{flex:1;padding:14px 16px;position:relative}
+  .bp-demo .codes{font-size:19px;font-weight:600;color:var(--brand-deep);letter-spacing:1px;display:flex;align-items:center;gap:7px}
+  .bp-demo .codes .fly{display:inline-flex;align-items:center;gap:4px;color:var(--brand-green)}
+  .bp-demo .codes .fly::before,.bp-demo .codes .fly::after{content:"";width:13px;border-top:1px solid rgba(0,98,65,.45)}
+  .bp-demo .codes .fly .ico{width:14px;height:14px}
+  .bp-demo .nm{font-size:12px;color:var(--text-primary);font-weight:600;margin-top:6px}
+  .bp-demo .dt{font-size:12px;color:var(--text-secondary);margin-top:4px}
+  .bp-demo .r{width:80px;border-left:2px dashed #D8D2C4;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:8px 4px}
+  .bp-demo .r::before,.bp-demo .r::after{content:"";position:absolute;left:-9px;width:16px;height:16px;border-radius:50%;background:var(--brand-cream)}
+  .bp-demo .r::before{top:-9px;clip-path:inset(48% 0 0 0)}
+  .bp-demo .r::after{bottom:-9px;clip-path:inset(0 0 48% 0)}
+  .barcode{width:56px;height:20px;opacity:.5;background:repeating-linear-gradient(90deg,var(--brand-deep) 0 2px,transparent 2px 4px,var(--brand-deep) 4px 5px,transparent 5px 9px,var(--brand-deep) 9px 12px,transparent 12px 14px)}
+  .bp-demo .sn{font-size:9px;color:var(--text-secondary);letter-spacing:1px}
+  .stamp-demo{position:absolute;top:8px;right:10px;width:58px;height:58px;border-radius:50%;border:2px solid rgba(30,57,50,.7);color:var(--brand-deep);background:rgba(30,57,50,.04);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;font-weight:600;transform:rotate(-4deg);line-height:1.3;text-align:center}
+  .stamp-demo small{font-size:6px;font-weight:400;letter-spacing:.5px;color:var(--text-secondary)}
+  /* 隐喻2 航线图 */
+  .route-demo{display:flex;align-items:flex-start;padding:14px 8px 4px}
+  .r-stp{display:flex;flex-direction:column;align-items:center;gap:5px;width:70px;flex-shrink:0}
+  .r-dot{width:22px;height:22px;border-radius:50%;border:1.5px solid #CFC8B8;background:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;color:#B9B2A2}
+  .r-dot .ico{width:12px;height:12px}
+  .r-stp.done .r-dot{background:var(--brand-green);border-color:var(--brand-green);color:#fff}
+  .r-stp.cur .r-dot{background:var(--brand-green);border-color:var(--brand-green);color:#fff;box-shadow:0 0 0 4px rgba(0,98,65,.14)}
+  .r-stp span{font-size:12px;color:var(--text-secondary)}
+  .r-stp.done span{color:var(--brand-green)}
+  .r-stp.cur span{color:var(--brand-green);font-weight:600}
+  .r-leg{flex:1;height:0;margin-top:11px;border-top:2px dashed #CFC8B8;min-width:14px}
+  .r-leg.flown{border-top:2px solid var(--brand-green)}
+  .r-leg .plane{position:relative;top:-10px;left:38%;color:var(--brand-green)}
+  .r-leg .plane .ico{width:16px;height:16px}
+  /* 隐喻3 印章 + 状态胶囊 */
+  .stamps-demo{display:flex;gap:22px;align-items:center;justify-content:center;padding:10px 0 8px;flex-wrap:wrap}
+  .stamp-big{width:74px;height:74px;border-radius:50%;border:2px solid rgba(30,57,50,.7);color:var(--brand-deep);background:rgba(30,57,50,.04);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:12px;font-weight:600;transform:rotate(-4deg);line-height:1.3;text-align:center}
+  .stamp-big small{font-size:7px;font-weight:400;letter-spacing:.5px;color:var(--text-secondary)}
+  /* 隐喻4 护照细线 + 会员优惠卡 */
+  .cc-demo{display:flex;gap:14px}
+  .ccard{width:150px;border-radius:12px;overflow:hidden;background:#fff;box-shadow:var(--shadow-card)}
+  .ccard .pic{height:64px;display:flex;align-items:center;justify-content:center;background:var(--brand-deep);color:var(--brand-cream);font-size:14px;font-weight:600;letter-spacing:3px}
+  .ccard .info{padding:8px 10px}
+  .ccard .name{font-size:12px;font-weight:600}
+  .ccard .price{font-size:12px;color:var(--text-secondary);margin-top:4px}
+  .ccard .price b{color:var(--accent-gold);font-size:14px;font-weight:600;font-variant-numeric:tabular-nums}
+  .band{height:2px}
+  .band-kr{background:rgba(94,123,166,.15)}
+  .band-us{background:rgba(78,104,144,.15)}
+  .band-gray{background:#8FA69C}
+  .coupon-demo{background:var(--brand-deep);border-radius:12px;padding:14px 16px;display:flex;align-items:center;box-shadow:0 8px 20px rgba(30,57,50,.18);margin-top:14px}
+  .coupon-demo .val{color:var(--accent-gold);font-size:24px;font-weight:600;font-variant-numeric:tabular-nums}
+  .coupon-demo .val small{font-size:12px;font-weight:400}
+  .coupon-demo .ci{margin-left:12px;color:var(--brand-cream);font-size:12px;font-weight:600}
+  .coupon-demo .ci small{display:block;font-size:10px;color:rgba(247,244,238,.65);font-weight:400;margin-top:3px}
+  /* 禁忌 */
+  .ban-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+  .ban{background:#fff;border-radius:12px;border-left:4px solid var(--st-error);padding:14px 16px;font-size:12px;color:var(--text-secondary);line-height:1.7;box-shadow:var(--shadow-card)}
+  .ban b{color:var(--st-error);display:block;margin-bottom:4px;font-size:14px;font-weight:600}
+  .foot{margin-top:52px;text-align:center;font-size:12px;color:#B9B2A2;letter-spacing:2px}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-search" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M15.8 15.8 20 20"/></g></symbol>
+    <symbol id="i-plane" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 3.5 4 10.8l6.6 2.4 2.5 6.6 7.4-16.3Z"/><path d="M10.6 13.2 20.5 3.5"/></g></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5.5" width="16" height="15" rx="2.5"/><path d="M4 10.5h16M8.5 3.5v4M15.5 3.5v4"/></g></symbol>
+    <symbol id="i-doc" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 3.5h7l4 4v13h-11z"/><path d="M13.5 3.5v4h4"/><path d="M9 12h6M9 15.5h6"/></g></symbol>
+    <symbol id="i-passport" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3.5" width="12" height="17" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M9.5 16.5h5"/></g></symbol>
+    <symbol id="i-location" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-6.5-5.3-6.5-10.5A6.5 6.5 0 0 1 12 4a6.5 6.5 0 0 1 6.5 6.5C18.5 15.7 12 21 12 21Z"/><circle cx="12" cy="10.5" r="2.3"/></g></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c1.4-3.4 4-5 7-5s5.6 1.6 7 5"/></g></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="M9 5.5 15.5 12 9 18.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-headset" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 13a7.5 7.5 0 0 1 15 0"/><rect x="3.5" y="12.5" width="4" height="6" rx="2"/><rect x="16.5" y="12.5" width="4" height="6" rx="2"/><path d="M18.5 18.5a3.5 3.5 0 0 1-3.5 2.5h-2"/></g></symbol>
+    <symbol id="i-edit" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19.5 8.5a2.1 2.1 0 0 0-3-3L5 17Z"/><path d="M14 7l3 3"/></g></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 6.5h15M9.5 6V4.5A1.5 1.5 0 0 1 11 3h2a1.5 1.5 0 0 1 1.5 1.5V6"/><path d="M6.5 6.5 7.3 20h9.4l.8-13.5"/><path d="M10 10.5v6M14 10.5v6"/></g></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5 10 17.5 19 7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 11 12 4.5 19.5 11"/><path d="M6.5 9.5V20h11V9.5"/><path d="M10 20v-5.5h4V20"/></g></symbol>
+    <symbol id="i-order" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h13A1.5 1.5 0 0 1 20 8.5v2a2 2 0 0 0 0 3.5v2a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 16v-2a2 2 0 0 0 0-3.5Z"/><path d="M14 7.5v2M14 11.25v1.5M14 14.75v2"/></g></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 4.5l2.3 4.7 5.2.8-3.8 3.7.9 5.2L12 16.4l-4.6 2.5.9-5.2L4.5 10l5.2-.8Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M20 12a8 8 0 0 1-8 8c-1.4 0-2.8-.4-4-1l-4 1 1.2-3.6A8 8 0 1 1 20 12Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  </defs>
+</svg>
+
+<header class="g-hero">
+  <a class="back" href="index.html">← 返回首页</a>
+  <div class="mark">
+    <div class="logo"><svg class="ico"><use href="#i-plane"/></svg></div>
+    <div class="bn">环球驿站<small>GLOBAL VISA ATELIER</small></div>
+  </div>
+  <h1>设计规范 · 精品质感 × 旅行效率</h1>
+  <div class="sub">借鉴气质，不抄界面。像走进一家安静的<em>签证精品店</em>，而不是打开一个办证工具。核心差异化：<em>「旅行文书」视觉隐喻体系</em>——订单=登机牌、进度=航线图、出签=盖章、国家卡=护照细线、优惠券=会员优惠卡。</div>
+  <span class="ver">核心原则：克制，单页彩色不超过两处</span>
+</header>
+
+<div class="wrap">
+
+  <!-- 01 色彩 -->
+  <section>
+    <div class="sec-h"><span class="no">01</span><h2>色彩令牌</h2><span class="en">COLOR TOKENS · 90 / 8 / 2</span></div>
+    <div class="note">配色原则 <span class="ratio">90% 中性色（墨绿文字 / 灰 / 奶油白）</span> + <span class="ratio">8% 品牌绿</span> + <span class="ratio">2% 暖金</span>。暖金 <b>#CBA258</b> 只允许出现在<b>价格数字、出签印章、会员号烫金</b>三处；旅行蓝 <b>#2577E3</b> 已从 C 端全面撤出，仅保留在 B 端表格文字操作链接；同屏状态色不超过 2 种。</div>
+    <div class="swatches">
+      <div class="sw"><div class="chip" style="background:#006241"><span class="hex">#006241</span></div><div class="meta"><div class="tk">--brand-green</div><div class="use">主品牌色（8%）：主按钮、选中态、Tab 下划线、C 端文字链接、已飞航段</div></div></div>
+      <div class="sw"><div class="chip" style="background:#1E3932"><span class="hex">#1E3932</span></div><div class="meta"><div class="tk">--brand-deep</div><div class="use">深墨绿：标题文字、沉浸式头部（纯色，禁渐变）、深色卡片、出签印章描边</div></div></div>
+      <div class="sw"><div class="chip light" style="background:#F7F4EE"><span class="hex">#F7F4EE</span></div><div class="meta"><div class="tk">--brand-cream</div><div class="use">奶油白：页面背景（不用纯白）</div></div></div>
+      <div class="sw"><div class="chip" style="background:#CBA258"><span class="hex">#CBA258</span></div><div class="meta"><div class="tk">--accent-gold</div><div class="use">暖金（2%，严格限量）：价格数字 · 出签印章 · 会员号烫金。其余一律改品牌绿或中性灰</div></div></div>
+      <div class="sw"><div class="chip" style="background:#2577E3"><span class="hex">#2577E3</span></div><div class="meta"><div class="tk">--travel-blue（仅 B 端）</div><div class="use">C 端全面撤出；仅保留在 B 端表格的文字操作链接</div></div></div>
+      <div class="sw"><div class="chip" style="background:#6B7B74"><span class="hex">#6B7B74</span></div><div class="meta"><div class="tk">--text-secondary</div><div class="use">次要文字（带绿调的灰）；主文字同 --brand-deep，不用纯黑</div></div></div>
+      <div class="sw"><div class="chip light" style="background:#E8E3D8"><span class="hex">#E8E3D8</span></div><div class="meta"><div class="tk">--divider</div><div class="use">分割线（暖灰）；登机牌撕线用更淡的 #D8D2C4</div></div></div>
+      <div class="sw"><div class="chip" style="background:linear-gradient(90deg,#3D7A5F 0 33%,#A87B2F 33% 66%,#A5483D 66% 100%)"><span class="hex">#3D7A5F / #A87B2F / #A5483D</span></div><div class="meta"><div class="tk">状态色（3 色收敛）</div><div class="use">进行中 / 待处理 / 异常：低饱和，统一"浅色底+深字"小胶囊，同屏 ≤2 种</div></div></div>
+    </div>
+  </section>
+
+  <!-- 02 字体层级 -->
+  <section>
+    <div class="sec-h"><span class="no">02</span><h2>字体层级</h2><span class="en">TYPOGRAPHY · 4 级收敛</span></div>
+    <div class="type-card">
+      <div class="trow"><div class="spec"><b>font-family</b>-apple-system, "PingFang SC", "Microsoft YaHei", sans-serif</div><div style="font-size:14px">全站统一系统字体栈，无外部字体依赖</div></div>
+      <div class="trow"><div class="spec"><b>H1 / 20px · 600</b>页面标题、头图主名</div><div style="font-size:20px;font-weight:600">美国 · B1/B2 旅游签证</div></div>
+      <div class="trow"><div class="spec"><b>H2 / 16px · 600</b>卡片标题、模块标题、主按钮</div><div style="font-size:16px;font-weight:600">世界那么大，签证交给我们</div></div>
+      <div class="trow"><div class="spec"><b>Body / 14px · 400</b>正文、列表信息</div><div style="font-size:14px">29个工作日 · 全国受理 · 需面试</div></div>
+      <div class="trow"><div class="spec"><b>Caption / 12px · 400</b>辅助说明、角标、订单号</div><div style="font-size:12px;color:var(--text-secondary)">订单号 V202608040012 · 有效期至 2031-05</div></div>
+      <div class="trow"><div class="spec"><b>Price / 22px · 600</b>暖金 + tabular-nums 等宽数字</div><div style="font-size:22px;font-weight:600;color:var(--accent-gold)" class="num">¥1895<span style="font-size:12px;font-weight:400;color:var(--text-secondary)"> /人起</span></div></div>
+    </div>
+  </section>
+
+  <!-- 03 圆角与阴影 -->
+  <section>
+    <div class="sec-h"><span class="no">03</span><h2>圆角 · 阴影 · 间距</h2><span class="en">RADIUS / SHADOW / SPACING</span></div>
+    <div class="shape-row">
+      <div class="shape"><div class="demo" style="width:64px;height:44px;border-radius:12px"></div><div class="nm">卡片圆角</div><div class="vl">border-radius: 12px</div></div>
+      <div class="shape"><div class="demo" style="width:64px;height:44px;border-radius:6px"></div><div class="nm">小标签圆角</div><div class="vl">border-radius: 6px</div></div>
+      <div class="shape"><div class="demo" style="width:96px;height:40px;border-radius:999px"></div><div class="nm">主按钮（胶囊）</div><div class="vl">border-radius: 999px</div></div>
+      <div class="shape"><div class="demo" style="width:64px;height:44px;border-radius:12px;box-shadow:0 4px 16px rgba(30,57,50,.18)"></div><div class="nm">卡片阴影</div><div class="vl">0 4px 16px rgba(30,57,50,.06)</div></div>
+      <div class="shape"><div class="demo" style="width:auto;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#F7F4EE;font-size:12px;letter-spacing:1px">16 / 12 / 24</div><div class="nm">间距节奏</div><div class="vl">卡内边距 16 · 卡间距 12 · 模块间距 24</div></div>
+      <div class="shape"><div class="demo" style="width:64px;height:44px;border-radius:12px;background:#fff;border:1px solid #E8E3D8"></div><div class="nm">描边 / 投影二选一</div><div class="vl">卡片只用其一，不叠加</div></div>
+    </div>
+  </section>
+
+  <!-- 04 图标系统 -->
+  <section>
+    <div class="sec-h"><span class="no">04</span><h2>图标系统</h2><span class="en">ICON SYSTEM · SVG LINE ICONS</span></div>
+    <div class="note">全面禁用 emoji 作为 UI 图标。统一<b>内联 SVG 线性图标</b>：<b>stroke=currentColor · stroke-width=1.5 · 圆角线帽 · 24×24 视框 · 单色继承文字色</b>。航线图飞机用同一套纸飞机符号、16px 克制尺寸；评级星为描边星 + 品牌绿填充。每页以 <b>&lt;svg&gt;&lt;symbol&gt;</b> 定义后用 <b>&lt;use&gt;</b> 复用。</div>
+    <div class="icon-card">
+      <div class="icon-grid">
+        <div class="icell"><div class="ib"><svg class="ico"><use href="#i-search"/></svg></div><div class="inm">搜索</div><div class="ien">i-search</div></div>
+        <div class="icell"><div class="ib"><svg class="ico"><use href="#i-plane"/></svg></div><div class="inm">航线飞机</div><div class="ien">i-plane</div></div>
+        <div class="icell"><div class="ib"><svg class="ico"><use href="#i-calendar"/></svg></div><div class="inm">日历</div><div class="ien">i-calendar</div></div>
+        <div class="icell"><div class="ib"><svg class="ico"><use href="#i-doc"/></svg></div><div class="inm">文档</div><div class="ien">i-doc</div></div>
+        <div class="icell"><div class="ib"><svg class="ico"><use href="#i-passport"/></svg></div><div class="inm">护照</div><div class="ien">i-passport</div></div>
+        <div class="icell"><div class="ib"><svg class="ico"><use href="#i-location"/></svg></div><div class="inm">定位</div><div class="ien">i-location</div></div>
+        <div class="icell"><div class="ib"><svg class="ico"><use href="#i-user"/></svg></div><div class="inm">我的</div><div class="ien">i-user</div></div>
+        <div class="icell"><div class="ib"><svg class="ico"><use href="#i-chevron"/></svg></div><div class="inm">箭头</div><div class="ien">i-chevron</div></div>
+        <div class="icell"><div class="ib"><svg class="ico"><use href="#i-headset"/></svg></div><div class="inm">客服</div><div class="ien">i-headset</div></div>
+        <div class="icell"><div class="ib"><svg class="ico"><use href="#i-edit"/></svg></div><div class="inm">编辑</div><div class="ien">i-edit</div></div>
+        <div class="icell"><div class="ib"><svg class="ico"><use href="#i-trash"/></svg></div><div class="inm">删除</div><div class="ien">i-trash</div></div>
+        <div class="icell"><div class="ib"><svg class="ico"><use href="#i-plus"/></svg></div><div class="inm">添加</div><div class="ien">i-plus</div></div>
+        <div class="icell"><div class="ib"><svg class="ico"><use href="#i-check"/></svg></div><div class="inm">完成</div><div class="ien">i-check</div></div>
+        <div class="icell"><div class="ib"><svg class="ico"><use href="#i-home"/></svg></div><div class="inm">首页</div><div class="ien">i-home</div></div>
+        <div class="icell"><div class="ib"><svg class="ico"><use href="#i-order"/></svg></div><div class="inm">订单</div><div class="ien">i-order</div></div>
+        <div class="icell"><div class="ib"><svg class="ico"><use href="#i-star"/></svg></div><div class="inm">评级星</div><div class="ien">i-star</div></div>
+        <div class="icell"><div class="ib"><svg class="ico"><use href="#i-chat"/></svg></div><div class="inm">会话</div><div class="ien">i-chat</div></div>
+      </div>
+    </div>
+    <div class="icon-spec">
+      <span>viewBox: 0 0 24 24</span><span>stroke: currentColor</span><span>stroke-width: 1.5</span><span>linecap / linejoin: round</span><span>fill: none（实心星除外，填充品牌绿）</span><span>航线飞机: 16px</span>
+    </div>
+  </section>
+
+  <!-- 05 组件样例 -->
+  <section>
+    <div class="sec-h"><span class="no">05</span><h2>组件样例</h2><span class="en">COMPONENTS</span></div>
+    <div class="comp-grid">
+      <div class="comp"><div class="cn">按钮<small>主按钮深绿胶囊 / 描边次按钮 / 置灰态；hover 只做透明度一种反馈</small></div>
+        <span class="btn-main">开始办理</span>　<span class="btn-line">查看进度</span>　<span class="btn-dis">手机号一键登录</span>
+      </div>
+      <div class="comp"><div class="cn">功能标签<small>品牌绿描边小标签（6px 圆角）</small></div>
+        <span class="tag tag-green">全国受理</span><span class="tag tag-green">需面试</span><span class="tag tag-gray">可选</span>
+      </div>
+      <div class="comp"><div class="cn">状态胶囊<small>浅色底 + 深字，同屏 ≤2 种状态色</small></div>
+        <span class="st st-ongoing">办理中</span><span class="st st-pending">待付款</span><span class="st st-error">已拒签</span>
+      </div>
+      <div class="comp"><div class="cn">卡片<small>白底 + 12px 圆角 + 极浅暖色投影（描边与投影二选一）</small></div>
+        <div style="background:var(--brand-cream);border-radius:12px;padding:14px">
+          <div style="background:#fff;border-radius:12px;box-shadow:var(--shadow-card);padding:14px">
+            <div style="font-size:14px;font-weight:600">韩国 · 五年多次签证</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:6px">首尔 · 济州岛 · 全国受理</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:8px"><b style="color:var(--accent-gold);font-size:16px;font-weight:600;font-variant-numeric:tabular-nums">¥1580</b> 起</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 旅行文书隐喻 -->
+  <section>
+    <div class="sec-h"><span class="no">06</span><h2>「旅行文书」视觉隐喻</h2><span class="en">TRAVEL DOCUMENT METAPHORS</span></div>
+    <div class="meta-grid">
+      <div class="metaphor">
+        <div class="m-hd"><div class="m-no">1</div><div class="m-t">订单卡 = 登机牌<small>BOARDING PASS</small></div></div>
+        <div class="m-bd">
+          <div class="bp-demo">
+            <div class="l">
+              <div class="codes">PEK<span class="fly"><svg class="ico"><use href="#i-plane"/></svg></span>ICN</div>
+              <div class="nm">韩国 · 五年多次签证</div>
+              <div class="dt">2人 · 已出签，顺丰 SF1234****</div>
+              <div class="stamp-demo">已出签<small>VISA GRANTED</small></div>
+            </div>
+            <div class="r"><div class="barcode"></div><div class="sn">V2026 0007</div></div>
+          </div>
+        </div>
+        <div class="m-desc">左侧「主联」：机场代码航线（<b>16px 纸飞机 SVG</b>）+ 签证信息；右侧「存根联」：<b>撕线减淡为 #D8D2C4 虚线 + 半圆缺口</b>，<b>条码纹降低高度、透明度 0.5</b>。</div>
+      </div>
+      <div class="metaphor">
+        <div class="m-hd"><div class="m-no">2</div><div class="m-t">办签进度 = 航线图<small>FLIGHT ROUTE</small></div></div>
+        <div class="m-bd">
+          <div class="route-demo">
+            <div class="r-stp done"><div class="r-dot">✓</div><span>下单</span></div>
+            <div class="r-leg flown"></div>
+            <div class="r-stp done"><div class="r-dot">✓</div><span>材料审核</span></div>
+            <div class="r-leg flown"><span class="plane"><svg class="ico"><use href="#i-plane"/></svg></span></div>
+            <div class="r-stp cur"><div class="r-dot"><svg class="ico"><use href="#i-plane"/></svg></div><span>使领馆</span></div>
+            <div class="r-leg"></div>
+            <div class="r-stp"><div class="r-dot">4</div><span>出签</span></div>
+            <div class="r-leg"></div>
+            <div class="r-stp"><div class="r-dot">5</div><span>寄回</span></div>
+          </div>
+        </div>
+        <div class="m-desc">五个经停点；当前节点为<b>品牌绿实心圆点 + 白色纸飞机</b>，外圈仅一圈浅绿光晕（去掉暖金描边）；<b>已飞过段落实线（品牌绿），未飞段落虚线</b>。</div>
+      </div>
+      <div class="metaphor">
+        <div class="m-hd"><div class="m-no">3</div><div class="m-t">出签 = 盖章<small>VISA STAMP · 仅"已出签"</small></div></div>
+        <div class="m-bd">
+          <div class="stamps-demo">
+            <div class="stamp-big">已出签<small>VISA GRANTED</small></div>
+            <span class="st st-ongoing">办理中</span>
+            <span class="st st-pending">待付款</span>
+            <span class="st st-error">已拒签</span>
+          </div>
+        </div>
+        <div class="m-desc">印章形式<b>仅保留"已出签"</b>：<b>墨绿描边、不倾斜或仅 -4°</b>；其余状态（待付款 / 办理中 / 已拒签）一律改为<b>浅色底 + 深字小胶囊</b>，禁用大红。</div>
+      </div>
+      <div class="metaphor">
+        <div class="m-hd"><div class="m-no">4</div><div class="m-t">国家卡 = 护照细线 · 优惠券 = 会员优惠卡<small>PASSPORT LINE / MEMBERSHIP CARD</small></div></div>
+        <div class="m-bd">
+          <div class="cc-demo">
+            <div class="ccard"><div class="pic">KR</div><div class="info"><div class="name">韩国</div><div class="price"><b>¥10</b> 起</div></div><div class="band band-kr"></div></div>
+            <div class="ccard"><div class="pic">US</div><div class="info"><div class="name">美国</div><div class="price"><b>¥1895</b> 起</div></div><div class="band band-us"></div></div>
+            <div class="ccard"><div class="pic">JP</div><div class="info"><div class="name">日本</div><div class="price"><b>¥30</b> 起</div></div><div class="band band-gray"></div></div>
+          </div>
+          <div class="coupon-demo">
+            <div class="val"><small>¥</small>50</div>
+            <div class="ci">签证服务抵扣券<small>满 ¥500 可用 · 纯色深绿卡面 + 烫金面值</small></div>
+          </div>
+        </div>
+        <div class="m-desc">国家卡头部统一纯色深墨绿 + 国家代码，底部改 <b>2px 单色细线</b>（深绿灰 #8FA69C 或该国单主色 15% 透明度），<b>取消彩虹渐变带</b>；优惠券为会员优惠卡式<b>纯色深绿卡面 + 烫金面值</b>。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 禁忌 -->
+  <section>
+    <div class="sec-h"><span class="no">07</span><h2>禁忌清单</h2><span class="en">DON'TS</span></div>
+    <div class="ban-list">
+      <div class="ban"><b>✕ 禁止 emoji 作为 UI 图标</b>飞机、放大镜、对话气泡、护照等 emoji 一律替换为统一内联 SVG 线性图标（stroke=currentColor / 1.5 / 24 视框）。</div>
+      <div class="ban"><b>✕ 禁止多色渐变</b>护照色带改 2px 单色细线（15% 透明度）；深绿头部一律纯色 #1E3932，不要绿到金渐变。</div>
+      <div class="ban"><b>✕ 暖金滥用</b>#CBA258 只允许价格数字、出签印章、会员号三处；Tab 下划线、角标、顶条、描边、按钮一律品牌绿或中性灰。</div>
+      <div class="ban"><b>✕ 红白配色方案</b>熊猫签证既视感，全站禁止红色主按钮/红色强调；异常态用低饱和 #A5483D。</div>
+      <div class="ban"><b>✕ 高饱和大色块 / 蓝紫渐变</b>旅行蓝 #2577E3 已从 C 端撤出，仅 B 端表格链接使用。</div>
+      <div class="ban"><b>✕ 照搬 OTA 首页布局</b>只借鉴信息层级逻辑，保持签证业务专注。</div>
+      <div class="ban"><b>✕ 国旗大图 / 卡通插画堆砌</b>国家识别统一走「纯色头 + 代码 + 护照细线」低饱和表达。</div>
+      <div class="ban"><b>✕ 装饰堆砌</b>禁斜线底纹与设计令牌标注行；卡片描边与投影二选一；hover 只做一种反馈。</div>
+    </div>
+  </section>
+
+  <div class="foot">环球驿站 · 旅行文书 · 克制即精致</div>
+</div>
+</body>
+</html>

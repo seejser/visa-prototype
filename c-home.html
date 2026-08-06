@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>首页 · 环球驿站</title>
+<style>
+  :root{
+    --brand-green:#006241; --brand-deep:#1E3932; --brand-cream:#F7F4EE;
+    --accent-gold:#CBA258;
+    --text-primary:#1E3932; --text-secondary:#6B7B74; --divider:#E8E3D8;
+    --st-ongoing:#3D7A5F; --st-pending:#A87B2F; --st-error:#A5483D;
+    --shadow-card:0 4px 16px rgba(30,57,50,.06);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+  body{background:#EAE6DC;padding:36px 30px 40px}
+  .page-title{font-size:20px;color:var(--text-primary);font-weight:600;margin-bottom:6px}
+  .page-sub{font-size:12px;color:var(--text-secondary);margin-bottom:8px}
+  .page-sub a{color:var(--brand-green);text-decoration:none}
+  .flow{display:flex;gap:72px;align-items:flex-start;overflow-x:auto;padding:36px 0 20px}
+  .screen-wrap{position:relative;flex-shrink:0}
+  .screen-label{position:absolute;top:-30px;left:2px;font-size:12px;color:var(--text-secondary);white-space:nowrap}
+  .screen-label b{color:var(--brand-deep);font-weight:600;margin-right:8px}
+  .arrow{position:absolute;top:390px;right:-52px;font-size:22px;color:#B9B2A2}
+  .phone{width:375px;height:812px;background:var(--brand-cream);border:1px solid #CBC4B4;border-radius:48px;overflow:hidden;position:relative;box-shadow:0 12px 32px rgba(30,57,50,.12)}
+  .statusbar{height:30px;display:flex;justify-content:space-between;align-items:center;padding:0 18px;font-size:12px;color:var(--text-secondary)}
+  .statusbar.on-dark{color:rgba(247,244,238,.85)}
+  .ico{width:20px;height:20px;display:inline-block;vertical-align:middle}
+  .ico.sm{width:16px;height:16px}
+  .tabbar{position:absolute;bottom:0;left:0;right:0;height:58px;border-top:1px solid var(--divider);background:#fff;display:flex}
+  .tabbar .tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:12px;color:var(--text-secondary);gap:4px}
+  .tabbar .tab.on{color:var(--brand-green);font-weight:600}
+  /* ===== 首页沉浸式头部：纯色深墨绿 ===== */
+  .hero{background:var(--brand-deep);padding:2px 20px 58px;position:relative;overflow:hidden}
+  .brand-row{display:flex;align-items:center;gap:9px;margin-top:10px}
+  .brand-mark{width:30px;height:30px;border-radius:50%;background:var(--brand-green);display:flex;align-items:center;justify-content:center;color:var(--brand-cream)}
+  .brand-mark .ico{width:16px;height:16px}
+  .brand-name{color:var(--brand-cream);font-size:14px;font-weight:600;letter-spacing:1px}
+  .brand-name small{display:block;font-size:9px;color:rgba(247,244,238,.55);font-weight:400;letter-spacing:2px;margin-top:2px}
+  .slogan{margin-top:22px;color:var(--brand-cream);font-size:20px;font-weight:600;line-height:1.55;position:relative;z-index:1}
+  .slogan em{font-style:normal;border-bottom:2px solid rgba(247,244,238,.35);padding-bottom:2px}
+  .slogan-sub{margin-top:10px;font-size:12px;color:rgba(247,244,238,.72);position:relative;z-index:1}
+  .search{margin:-24px 20px 0;height:46px;border-radius:999px;background:#fff;display:flex;align-items:center;padding:0 18px;font-size:14px;color:var(--text-secondary);gap:8px;box-shadow:var(--shadow-card);position:relative;z-index:2}
+  .search .hot{margin-left:auto;font-size:12px;color:var(--brand-green);border:1px solid rgba(0,98,65,.3);border-radius:6px;padding:1px 8px;background:rgba(0,98,65,.05)}
+  /* banner：纯色深绿 */
+  .banner{margin:14px 20px 0;height:104px;border-radius:12px;background:var(--brand-deep);position:relative;overflow:hidden;box-shadow:var(--shadow-card)}
+  .banner .bd-in{padding:18px;color:var(--brand-cream)}
+  .banner .bd-in .t1{font-size:16px;font-weight:600}
+  .banner .bd-in .t1 em{font-style:normal;border-bottom:1px solid rgba(247,244,238,.4);padding-bottom:1px}
+  .banner .bd-in .t2{font-size:12px;color:rgba(247,244,238,.7);margin-top:7px}
+  .banner .bd-in .t3{display:inline-block;margin-top:11px;font-size:12px;color:var(--brand-cream);border:1px solid rgba(247,244,238,.4);border-radius:999px;padding:3px 12px}
+  .banner .b-ico{position:absolute;right:22px;top:50%;transform:translateY(-50%);color:rgba(247,244,238,.85)}
+  .banner .b-ico .ico{width:40px;height:40px}
+  .dots{display:flex;justify-content:center;gap:5px;margin:10px 0 2px}
+  .dots i{width:6px;height:6px;border-radius:50%;background:#D8D2C4}
+  .dots i.on{background:var(--brand-green);width:16px;border-radius:3px}
+  /* 分区 Tab：下划线滑动（纯品牌绿） */
+  .region-tabs{position:relative;display:flex;padding:0 20px;border-bottom:1px solid var(--divider);background:var(--brand-cream)}
+  .region-tabs span{flex:1;text-align:center;font-size:14px;color:var(--text-secondary);padding:12px 0;cursor:pointer;transition:color .25s}
+  .region-tabs span.on{color:var(--brand-green);font-weight:600}
+  .region-tabs .ink{position:absolute;bottom:-1px;height:2px;border-radius:1px;background:var(--brand-green);transition:left .3s cubic-bezier(.4,0,.2,1),width .3s cubic-bezier(.4,0,.2,1)}
+  /* 国家卡：护照内页 + 2px 单色细线 */
+  .cards{display:flex;flex-wrap:wrap;gap:12px;padding:14px 20px}
+  .ccard{width:calc(50% - 6px);border-radius:12px;overflow:hidden;background:#fff;box-shadow:var(--shadow-card);transition:opacity .2s}
+  .ccard:hover{opacity:.92}
+  .ccard .pic{height:82px;background:var(--brand-deep);display:flex;align-items:center;justify-content:center;position:relative;color:var(--brand-cream)}
+  .ccard .pic .code{font-size:20px;font-weight:600;letter-spacing:4px}
+  .ccard .pic .wm{position:absolute;left:14px;bottom:10px;color:rgba(247,244,238,.3)}
+  .ccard .pic .wm .ico{width:16px;height:16px}
+  .ccard .pic .stamp-corner{position:absolute;top:6px;right:8px;font-size:9px;color:rgba(247,244,238,.75);border:1px solid rgba(247,244,238,.4);border-radius:6px;padding:1px 5px;letter-spacing:1px}
+  .ccard .info{padding:10px 12px 11px}
+  .ccard .name{font-size:14px;color:var(--text-primary);font-weight:600}
+  .ccard .tagline{font-size:12px;color:var(--text-secondary);margin-top:3px}
+  .ccard .price{font-size:12px;color:var(--text-secondary);margin-top:7px}
+  .ccard .price b{color:var(--accent-gold);font-size:16px;font-weight:600;font-variant-numeric:tabular-nums}
+  .band{height:2px}
+  /* 各国护照色带：单主色 15% 透明度 */
+  .band-kr{background:rgba(94,123,166,.15)} .band-jp{background:rgba(169,90,80,.15)}
+  .band-vn{background:rgba(168,95,89,.15)} .band-au{background:rgba(91,114,153,.15)}
+  .band-us{background:rgba(78,104,144,.15)} .band-th{background:rgba(123,143,176,.15)}
+  .band-fr{background:rgba(110,132,168,.15)} .band-uk{background:rgba(90,110,146,.15)}
+  .band-de{background:rgba(138,123,92,.15)} .band-it{background:rgba(110,144,120,.15)}
+  .hint{font-size:12px;color:#B9B2A2;text-align:center;padding:8px 0 14px;letter-spacing:1px}
+  .consult{position:absolute;right:16px;bottom:78px;width:52px;height:52px;border-radius:50%;background:var(--brand-green);color:var(--brand-cream);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;gap:3px;box-shadow:0 6px 16px rgba(0,98,65,.3)}
+  .consult .ico{width:18px;height:18px}
+  /* 搜索结果卡 */
+  .sr-card{background:#fff;border-radius:12px;padding:14px;margin:0 20px 12px;box-shadow:var(--shadow-card);overflow:hidden}
+  .sr-card .t{font-size:14px;color:var(--text-primary);font-weight:600}
+  .sr-card .s{font-size:12px;color:var(--text-secondary);margin-top:6px}
+  .sr-card .p{font-size:12px;color:var(--text-secondary);margin-top:8px}
+  .sr-card .p b{color:var(--accent-gold);font-size:16px;font-weight:600;font-variant-numeric:tabular-nums}
+  .sr-card .interview{display:inline-block;font-size:12px;color:var(--brand-green);border:1px solid rgba(0,98,65,.3);background:rgba(0,98,65,.05);border-radius:6px;padding:0 7px;margin-left:7px;vertical-align:1px}
+  .cancel{margin-left:auto;color:var(--brand-green);font-size:14px}
+  .history{padding:12px 20px;font-size:12px;color:var(--text-secondary);display:flex;align-items:center}
+  .history .chip{display:inline-block;background:#fff;border:1px solid var(--divider);border-radius:999px;padding:3px 12px;margin-right:8px;color:var(--text-primary)}
+  .history .clear{margin-left:auto;color:#B9B2A2;display:inline-flex;align-items:center;gap:5px;cursor:pointer}
+  .history .clear .ico{width:15px;height:15px}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-search" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M15.8 15.8 20 20"/></g></symbol>
+    <symbol id="i-plane" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 3.5 4 10.8l6.6 2.4 2.5 6.6 7.4-16.3Z"/><path d="M10.6 13.2 20.5 3.5"/></g></symbol>
+    <symbol id="i-passport" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3.5" width="12" height="17" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M9.5 16.5h5"/></g></symbol>
+    <symbol id="i-order" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h13A1.5 1.5 0 0 1 20 8.5v2a2 2 0 0 0 0 3.5v2a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 16v-2a2 2 0 0 0 0-3.5Z"/><path d="M14 7.5v2M14 11.25v1.5M14 14.75v2"/></g></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c1.4-3.4 4-5 7-5s5.6 1.6 7 5"/></g></symbol>
+    <symbol id="i-headset" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 13a7.5 7.5 0 0 1 15 0"/><rect x="3.5" y="12.5" width="4" height="6" rx="2"/><rect x="16.5" y="12.5" width="4" height="6" rx="2"/><path d="M18.5 18.5a3.5 3.5 0 0 1-3.5 2.5h-2"/></g></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 6.5h15M9.5 6V4.5A1.5 1.5 0 0 1 11 3h2a1.5 1.5 0 0 1 1.5 1.5V6"/><path d="M6.5 6.5 7.3 20h9.4l.8-13.5"/><path d="M10 10.5v6M14 10.5v6"/></g></symbol>
+    <symbol id="i-building" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V5.5A1.5 1.5 0 0 1 5.5 4h7A1.5 1.5 0 0 1 14 5.5V21"/><path d="M14 9h4.5A1.5 1.5 0 0 1 20 10.5V21"/><path d="M3 21h18"/><path d="M7.5 8h3M7.5 11.5h3M7.5 15h3"/></g></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5.5" width="16" height="15" rx="2.5"/><path d="M4 10.5h16M8.5 3.5v4M15.5 3.5v4"/></g></symbol>
+  </defs>
+</svg>
+
+<div class="page-title">首页</div>
+<div class="page-sub">热门国家签证推荐、分区筛选、企业身份权益与在线咨询入口</div>
+
+<div class="flow">
+  <!-- 屏1：首页-热门 -->
+  <div class="screen-wrap">
+    <div class="screen-label"><b>01</b>首页 - 热门</div>
+    <div class="phone">
+      <div class="hero">
+        <div class="statusbar on-dark"><span>9:41</span><span></span><span>···</span></div>
+        <div class="brand-row">
+          <div class="brand-mark"><svg class="ico"><use href="#i-plane"/></svg></div>
+          <div class="brand-name">环球驿站<small>GLOBAL VISA ATELIER</small></div>
+        </div>
+        <div class="slogan">世界那么大，<br><em>签证</em>交给我们</div>
+        <div class="slogan-sub">30+ 热门目的地 · 材料预审 · 全程可追踪</div>
+      </div>
+      <div class="search"><svg class="ico sm"><use href="#i-search"/></svg>搜索目的地 / 签证类型<span class="hot">办签高峰</span></div>
+      <!-- 企业身份条 -->
+      <div style="margin:12px 20px 0;background:#fff;border:1px solid var(--divider);border-left:3px solid var(--brand-green);border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow-card)">
+        <div style="width:26px;height:26px;border-radius:8px;background:rgba(0,98,65,.07);color:var(--brand-green);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg class="ico sm"><use href="#i-building"/></svg></div>
+        <div style="font-size:12px;color:var(--text-secondary);line-height:1.5">所属企业 <b style="color:var(--brand-deep);font-size:14px">星辰科技有限公司</b><br>企业协议价已生效 · 余额支付可用</div>
+        <div style="margin-left:auto;font-size:12px;color:var(--brand-green);white-space:nowrap">切换 ›</div>
+      </div>
+      <div class="banner">
+        <div class="bd-in">
+          <div class="t1">各国最早可预约时间 <em>一键查询</em></div>
+          <div class="t2">使领馆排期实时更新 · 出签率参考</div>
+          <div class="t3">立即查询 ›</div>
+        </div>
+        <div class="b-ico"><svg class="ico"><use href="#i-calendar"/></svg></div>
+      </div>
+      <div class="dots"><i class="on"></i><i></i><i></i></div>
+      <div class="region-tabs">
+        <span class="on">热门</span><span>亚洲</span><span>美洲</span><span>大洋洲</span><span>欧洲</span><span>非洲</span>
+        <i class="ink"></i>
+      </div>
+      <div class="cards">
+        <div class="ccard"><div class="pic"><span class="wm"><svg class="ico"><use href="#i-plane"/></svg></span><span class="code">KR</span><span class="stamp-corner">VISA</span></div><div class="info"><div class="name">韩国</div><div class="tagline">首尔 · 济州岛</div><div class="price"><b>¥10</b> 起</div></div><div class="band band-kr"></div></div>
+        <div class="ccard"><div class="pic"><span class="wm"><svg class="ico"><use href="#i-plane"/></svg></span><span class="code">JP</span><span class="stamp-corner">VISA</span></div><div class="info"><div class="name">日本</div><div class="tagline">东京 · 大阪</div><div class="price"><b>¥30</b> 起</div></div><div class="band band-jp"></div></div>
+        <div class="ccard"><div class="pic"><span class="wm"><svg class="ico"><use href="#i-plane"/></svg></span><span class="code">VN</span><span class="stamp-corner">VISA</span></div><div class="info"><div class="name">越南</div><div class="tagline">河内 · 岘港</div><div class="price"><b>¥30</b> 起</div></div><div class="band band-vn"></div></div>
+        <div class="ccard"><div class="pic"><span class="wm"><svg class="ico"><use href="#i-plane"/></svg></span><span class="code">AU</span><span class="stamp-corner">VISA</span></div><div class="info"><div class="name">澳大利亚</div><div class="tagline">悉尼 · 墨尔本</div><div class="price"><b>¥199</b> 起</div></div><div class="band band-au"></div></div>
+        <div class="ccard"><div class="pic"><span class="wm"><svg class="ico"><use href="#i-plane"/></svg></span><span class="code">US</span><span class="stamp-corner">VISA</span></div><div class="info"><div class="name">美国</div><div class="tagline">B1/B2 · 需面试</div><div class="price"><b>¥1895</b> 起</div></div><div class="band band-us"></div></div>
+        <div class="ccard"><div class="pic"><span class="wm"><svg class="ico"><use href="#i-plane"/></svg></span><span class="code">TH</span><span class="stamp-corner">VISA</span></div><div class="info"><div class="name">泰国</div><div class="tagline">曼谷 · 清迈</div><div class="price"><b>¥25</b> 起</div></div><div class="band band-th"></div></div>
+      </div>
+      <div class="hint">— 上拉加载更多国家 —</div>
+      <div class="consult"><svg class="ico"><use href="#i-headset"/></svg>咨询</div>
+      <div class="tabbar">
+        <div class="tab on"><svg class="ico"><use href="#i-passport"/></svg>签证</div>
+        <div class="tab"><svg class="ico"><use href="#i-order"/></svg>订单</div>
+        <div class="tab"><svg class="ico"><use href="#i-user"/></svg>我的</div>
+      </div>
+    </div>
+    <div class="arrow">→</div>
+  </div>
+
+  <!-- 屏2：首页-欧洲分区（Tab切换示意） -->
+  <div class="screen-wrap">
+    <div class="screen-label"><b>02</b>首页 - 欧洲</div>
+    <div class="phone">
+      <div class="hero">
+        <div class="statusbar on-dark"><span>9:41</span><span></span><span>···</span></div>
+        <div class="brand-row">
+          <div class="brand-mark"><svg class="ico"><use href="#i-plane"/></svg></div>
+          <div class="brand-name">环球驿站<small>GLOBAL VISA ATELIER</small></div>
+        </div>
+        <div class="slogan">世界那么大，<br><em>签证</em>交给我们</div>
+        <div class="slogan-sub">30+ 热门目的地 · 材料预审 · 全程可追踪</div>
+      </div>
+      <div class="search"><svg class="ico sm"><use href="#i-search"/></svg>搜索目的地 / 签证类型<span class="hot">办签高峰</span></div>
+      <div class="banner">
+        <div class="bd-in">
+          <div class="t1">申根签 <em>一签畅游 27 国</em></div>
+          <div class="t2">法国 / 德国 / 意大利 材料清单已更新</div>
+          <div class="t3">查看攻略 ›</div>
+        </div>
+        <div class="b-ico"><svg class="ico"><use href="#i-plane"/></svg></div>
+      </div>
+      <div class="dots"><i></i><i class="on"></i><i></i></div>
+      <div class="region-tabs">
+        <span>热门</span><span>亚洲</span><span>美洲</span><span>大洋洲</span><span class="on">欧洲</span><span>非洲</span>
+        <i class="ink"></i>
+      </div>
+      <div class="cards">
+        <div class="ccard"><div class="pic"><span class="wm"><svg class="ico"><use href="#i-plane"/></svg></span><span class="code">FR</span><span class="stamp-corner">VISA</span></div><div class="info"><div class="name">法国（申根）</div><div class="tagline">巴黎 · 尼斯</div><div class="price"><b>¥899</b> 起</div></div><div class="band band-fr"></div></div>
+        <div class="ccard"><div class="pic"><span class="wm"><svg class="ico"><use href="#i-plane"/></svg></span><span class="code">GB</span><span class="stamp-corner">VISA</span></div><div class="info"><div class="name">英国</div><div class="tagline">伦敦 · 爱丁堡</div><div class="price"><b>¥1099</b> 起</div></div><div class="band band-uk"></div></div>
+        <div class="ccard"><div class="pic"><span class="wm"><svg class="ico"><use href="#i-plane"/></svg></span><span class="code">DE</span><span class="stamp-corner">VISA</span></div><div class="info"><div class="name">德国（申根）</div><div class="tagline">柏林 · 慕尼黑</div><div class="price"><b>¥899</b> 起</div></div><div class="band band-de"></div></div>
+        <div class="ccard"><div class="pic"><span class="wm"><svg class="ico"><use href="#i-plane"/></svg></span><span class="code">IT</span><span class="stamp-corner">VISA</span></div><div class="info"><div class="name">意大利（申根）</div><div class="tagline">罗马 · 米兰</div><div class="price"><b>¥899</b> 起</div></div><div class="band band-it"></div></div>
+      </div>
+      <div class="consult"><svg class="ico"><use href="#i-headset"/></svg>咨询</div>
+      <div class="tabbar">
+        <div class="tab on"><svg class="ico"><use href="#i-passport"/></svg>签证</div>
+        <div class="tab"><svg class="ico"><use href="#i-order"/></svg>订单</div>
+        <div class="tab"><svg class="ico"><use href="#i-user"/></svg>我的</div>
+      </div>
+    </div>
+    <div class="arrow">→</div>
+  </div>
+
+  <!-- 屏3：搜索结果 -->
+  <div class="screen-wrap">
+    <div class="screen-label"><b>03</b>搜索"美国"结果页</div>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span>环球驿站</span><span>···</span></div>
+      <div style="height:44px;display:flex;align-items:center;padding:8px 20px 0">
+        <div style="flex:1;height:36px;border-radius:999px;background:#fff;display:flex;align-items:center;padding:0 14px;font-size:14px;color:var(--text-primary);gap:7px;box-shadow:var(--shadow-card)"><svg class="ico sm" style="color:var(--text-secondary)"><use href="#i-search"/></svg>美国</div>
+        <span class="cancel" style="margin-left:14px">取消</span>
+      </div>
+      <div class="history">历史搜索：<span class="chip">美国</span><span class="chip">日本</span><span class="clear"><svg class="ico"><use href="#i-trash"/></svg>清除</span></div>
+      <div style="padding:2px 20px 10px;font-size:12px;color:var(--text-secondary)">为您找到 <b style="color:var(--brand-green)">2</b> 个签证产品</div>
+      <div class="sr-card">
+        <div class="t">美国 · B1/B2 旅游签证<span class="interview">需面试</span></div>
+        <div class="s">29个工作日 · 全国受理</div>
+        <div class="p"><b>¥1895</b> /人起</div>
+        <div class="band band-us" style="margin:12px -14px -14px"></div>
+      </div>
+      <div class="sr-card">
+        <div class="t">美国 · 商务签证<span class="interview">需面试</span></div>
+        <div class="s">29个工作日 · 全国受理</div>
+        <div class="p"><b>¥1995</b> /人起</div>
+        <div class="band band-us" style="margin:12px -14px -14px"></div>
+      </div>
+      <div class="consult"><svg class="ico"><use href="#i-headset"/></svg>咨询</div>
+      <div class="tabbar">
+        <div class="tab on"><svg class="ico"><use href="#i-passport"/></svg>签证</div>
+        <div class="tab"><svg class="ico"><use href="#i-order"/></svg>订单</div>
+        <div class="tab"><svg class="ico"><use href="#i-user"/></svg>我的</div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+// 分区Tab切换 + 下划线滑动
+function placeInk(bar){
+  var on = bar.querySelector('span.on'), ink = bar.querySelector('.ink');
+  if(!on || !ink) return;
+  ink.style.left = (on.offsetLeft + on.offsetWidth*0.22) + 'px';
+  ink.style.width = (on.offsetWidth*0.56) + 'px';
+}
+document.querySelectorAll('.region-tabs').forEach(function(bar){
+  placeInk(bar);
+  bar.querySelectorAll('span').forEach(function(s){
+    s.addEventListener('click',function(){
+      bar.querySelectorAll('span').forEach(function(x){x.classList.remove('on')});
+      s.classList.add('on');
+      placeInk(bar);
+    });
+  });
+});
+window.addEventListener('load',function(){
+  document.querySelectorAll('.region-tabs').forEach(placeInk);
+});
+</script>
+</body>
+</html>

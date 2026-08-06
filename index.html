@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>环球驿站 · 企业签证服务平台</title>
+<style>
+  :root{
+    --brand-green:#006241; --brand-deep:#1E3932; --brand-cream:#F7F4EE;
+    --accent-gold:#CBA258; --travel-blue:#2577E3;
+    --text-primary:#1E3932; --text-secondary:#6B7B74; --divider:#E8E3D8;
+    --st-doing:#3D7A5F; --st-wait:#A87B2F; --st-err:#A5483D;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+  body{background:var(--brand-cream);color:var(--text-primary);font-size:14px}
+  .ic{width:18px;height:18px;flex-shrink:0}
+  /* ===== 深墨绿头部（纯色） ===== */
+  .hd{background:var(--brand-deep);color:var(--brand-cream);padding:52px 40px 46px;position:relative;overflow:hidden}
+  .hd .wrap{max-width:1180px;margin:0 auto;position:relative;z-index:2}
+  .hd .brand{display:flex;align-items:center;gap:12px;font-size:12px;color:rgba(247,244,238,.72);letter-spacing:2px;margin-bottom:14px}
+  .hd .brand .lg{width:30px;height:30px;border-radius:50%;background:var(--brand-green);display:flex;align-items:center;justify-content:center;color:var(--brand-cream)}
+  .hd .brand .lg .ic{width:16px;height:16px}
+  .hd h1{font-size:32px;font-weight:600;letter-spacing:1px}
+  .hd h1 span{color:rgba(247,244,238,.4)}
+  .hd .slogan{margin-top:12px;font-size:14px;color:rgba(247,244,238,.85)}
+  .hd .slogan b{color:var(--brand-cream);font-weight:600}
+  .hd .meta{margin-top:18px;font-size:12px;color:rgba(247,244,238,.55);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .hd .meta .pill{border:1px solid rgba(247,244,238,.35);color:rgba(247,244,238,.85);border-radius:999px;padding:3px 12px;font-size:12px}
+  .hd .sg-link{display:inline-flex;align-items:center;gap:8px;margin-top:20px;border:1px solid rgba(247,244,238,.45);color:var(--brand-cream);border-radius:999px;padding:9px 20px;font-size:14px;font-weight:600;text-decoration:none;transition:background .15s}
+  .hd .sg-link:hover{background:rgba(247,244,238,.1)}
+  .hd .sg-link .ic{width:16px;height:16px}
+  /* ===== 主体 ===== */
+  .wrap{max-width:1180px;margin:0 auto;padding:36px 40px 0}
+  .group{margin-bottom:32px}
+  .group-t{font-size:16px;font-weight:600;color:var(--brand-deep);border-left:3px solid var(--brand-green);padding-left:12px;margin-bottom:16px;display:flex;align-items:baseline}
+  .group-t small{font-size:12px;color:var(--text-secondary);font-weight:400;margin-left:10px}
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .card{background:#fff;border-radius:12px;border:1px solid var(--divider);padding:16px;text-decoration:none;color:var(--text-primary);display:block;transition:border-color .15s}
+  .card:hover{border-color:var(--brand-green)}
+  .card .no{display:inline-block;font-size:12px;color:var(--brand-cream);background:var(--brand-green);border-radius:6px;padding:2px 10px;margin-bottom:10px;letter-spacing:1px}
+  .card h3{font-size:16px;font-weight:600;margin-bottom:8px;color:var(--brand-deep)}
+  .card p{font-size:12px;color:var(--text-secondary);line-height:1.8}
+  .card .go{font-size:12px;color:var(--brand-green);margin-top:12px;font-weight:600}
+  /* ===== 航线图流程 ===== */
+  .flows{background:#fff;border-radius:12px;border:1px solid var(--divider);padding:24px 28px;margin-bottom:32px}
+  .flows .ft-t{font-size:16px;font-weight:600;color:var(--brand-deep);padding-left:10px;border-left:3px solid var(--brand-green);margin-bottom:22px}
+  .flow{margin-bottom:22px}
+  .flow:last-child{margin-bottom:4px}
+  .flow .fl-lb{font-size:12px;color:var(--text-secondary);margin-bottom:12px}
+  .flow .fl-lb b{color:var(--brand-deep);font-size:14px;font-weight:600}
+  .route{display:flex;align-items:center;flex-wrap:nowrap}
+  .stop{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:78px}
+  .stop .pt{width:30px;height:30px;border-radius:50%;background:var(--brand-green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;box-shadow:0 0 0 4px rgba(0,98,65,.10)}
+  .stop .pt.plane{background:#fff;border:2px solid var(--brand-green);color:var(--brand-green);box-shadow:0 0 0 5px rgba(0,98,65,.08)}
+  .stop .pt.plane .ic{width:16px;height:16px}
+  .stop .nm{font-size:12px;color:var(--text-secondary);white-space:nowrap}
+  .seg{flex:1;min-width:18px;border-top:2px dashed #C9C2B2;margin:0 6px 22px}
+  .seg.solid{border-top:2px solid var(--brand-green)}
+  /* ===== 页脚 ===== */
+  .ft{background:var(--brand-deep);color:rgba(247,244,238,.55);font-size:12px;text-align:center;padding:22px;margin-top:10px}
+  .ft b{color:var(--brand-cream);font-weight:600}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-plane" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></symbol>
+    <symbol id="i-guide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5z"/><path d="M5 19.5A1.5 1.5 0 0 1 6.5 18H19"/><path d="M9 7.5h6"/></symbol>
+  </defs>
+</svg>
+
+<div class="hd">
+  <div class="wrap">
+    <div class="brand"><span class="lg"><svg class="ic"><use href="#i-plane"/></svg></span>GLOBAL WAYSTATION · 环球驿站</div>
+    <h1>环球驿站 · 企业签证服务平台</h1>
+    <div class="slogan">B2B 企业签证服务平台，覆盖员工端、企业管理员端、供应商端与平台管理端。</div>
+    <div class="meta">
+      <span class="pill">B2B 企业签证服务</span>
+      <span>四端协同：员工端 · 企业管理员端 · 供应商端 · 平台管理端</span>
+    </div>
+    <a class="sg-link" href="style-guide.html" target="_blank"><svg class="ic"><use href="#i-guide"/></svg>设计规范 →</a>
+  </div>
+</div>
+
+<div class="wrap">
+  <!-- 核心流程：航线图 -->
+  <div class="flows">
+    <div class="ft-t">核心流程 · 航线图</div>
+    <div class="flow">
+      <div class="fl-lb"><b>员工端核心流程</b>　登录 → 绑定企业 → 首页 → 详情（材料下载/答疑） → 下单（护照上传/企业余额支付） → 本人订单</div>
+      <div class="route">
+        <div class="stop"><div class="pt">1</div><div class="nm">登录 c-login</div></div>
+        <div class="seg solid"></div>
+        <div class="stop"><div class="pt">2</div><div class="nm">绑定企业</div></div>
+        <div class="seg solid"></div>
+        <div class="stop"><div class="pt">3</div><div class="nm">首页 c-home</div></div>
+        <div class="seg solid"></div>
+        <div class="stop"><div class="pt">4</div><div class="nm">签证详情</div></div>
+        <div class="seg solid"></div>
+        <div class="stop"><div class="pt plane"><svg class="ic"><use href="#i-plane"/></svg></div><div class="nm">下单 c-order-flow</div></div>
+        <div class="seg"></div>
+        <div class="stop"><div class="pt">6</div><div class="nm">本人订单 c-mine</div></div>
+      </div>
+    </div>
+    <div class="flow">
+      <div class="fl-lb"><b>企业→平台→供应商 履约流程</b>　企业下单 → 交付派单 → 供应商履约 → 外勤陪同 → 财务对账结算</div>
+      <div class="route">
+        <div class="stop"><div class="pt">1</div><div class="nm">企业工作台 c-enterprise</div></div>
+        <div class="seg solid"></div>
+        <div class="stop"><div class="pt">2</div><div class="nm">交付派单 p-order</div></div>
+        <div class="seg solid"></div>
+        <div class="stop"><div class="pt plane"><svg class="ic"><use href="#i-plane"/></svg></div><div class="nm">供应商履约 s-orders</div></div>
+        <div class="seg"></div>
+        <div class="stop"><div class="pt">4</div><div class="nm">外勤回执 p-field</div></div>
+        <div class="seg"></div>
+        <div class="stop"><div class="pt">5</div><div class="nm">财务对账 p-finance</div></div>
+        <div class="seg"></div>
+        <div class="stop"><div class="pt">6</div><div class="nm">管理者看板 p-dashboard</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="group-t">一、企业员工端<small>查看流程/材料/费用 · 下单传护照 · 限本人订单</small></div>
+    <div class="cards">
+      <a class="card" href="c-login.html" target="_blank">
+        <span class="no">C-登录</span><h3>登录与企业绑定（4屏）</h3>
+        <p>手机号一键登录 / 协议勾选 → <b>企业身份绑定</b>（邀请码 / 搜索企业申请加入）→ 隐私政策</p>
+        <div class="go">查看页面 →</div>
+      </a>
+      <a class="card" href="c-home.html" target="_blank">
+        <span class="no">C-1</span><h3>首页</h3>
+        <p>企业身份条（协议价生效）、搜索目的地、Banner、国家分区Tab、国家卡片双列、悬浮咨询、底部Tab</p>
+        <div class="go">查看页面 →</div>
+      </a>
+      <a class="card" href="c-detail.html" target="_blank">
+        <span class="no">C-2</span><h3>签证详情（美国）</h3>
+        <p>流程/周期/费用/材料清单（<b>支持下载PDF</b>）、<b>在线答疑</b>（FAQ+人工会话）、底部「开始办理」</p>
+        <div class="go">查看页面 →</div>
+      </a>
+      <a class="card" href="c-order-flow.html" target="_blank">
+        <span class="no">C-3</span><h3>下单流程（4屏）</h3>
+        <p>选日期 → 出行信息 + <b>护照拍照上传</b> → 选择申请人 → 确认订单 + <b>企业余额/微信支付</b></p>
+        <div class="go">查看页面 →</div>
+      </a>
+      <a class="card" href="c-mine.html" target="_blank">
+        <span class="no">C-4</span><h3>我的订单 / 我的</h3>
+        <p>订单卡（<b>限本人订单</b> + 所属企业标识）；我的（企业身份 + <b>企业工作台入口</b>、优惠券、客服）；未登录弹层</p>
+        <div class="go">查看页面 →</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="group-t">二、企业管理员端<small>全企业申请 / 整体账单 / 对公充值积分 / 导出</small></div>
+    <div class="cards">
+      <a class="card" href="c-enterprise.html" target="_blank">
+        <span class="no">E-1</span><h3>企业工作台（3屏）</h3>
+        <p>① 全企业申请（状态筛选） → ② 整体账单（时间轴<b>日/周/月/全部</b> + 趋势 + <b>账单导出</b>） → ③ 余额/<b>对公二维码充值</b>/积分记录</p>
+        <div class="go">查看页面 →</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="group-t">三、供应商工作台（Web）<small>1440 PC · 接单履约 / 材料审核 / 出签录入（维持原方案）</small></div>
+    <div class="cards">
+      <a class="card" href="s-orders.html" target="_blank">
+        <span class="no">S-1</span><h3>订单管理</h3>
+        <p>状态Tab品牌绿角标（待接单/材料审核中/办理中/已完成/异常）、筛选栏、行内操作（接单实心 / 拒单描边 / 审核链接）</p>
+        <div class="go">查看页面 →</div>
+      </a>
+      <a class="card" href="s-order-detail.html" target="_blank">
+        <span class="no">S-2</span><h3>订单处理详情</h3>
+        <p>材料审核 checklist（绿勾通过 / 暗金叉驳回+备注）、办签进度「航线图」五经停点、出签结果录入（签证页+物流单号）</p>
+        <div class="go">查看页面 →</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="group-t">四、公司 ERP 管理后台（Web · 五角色）<small>1440 PC · 销售/交付/外勤/财务/管理者 · KPI：订单量/GMV/支付转化率</small></div>
+    <div class="cards">
+      <a class="card" href="p-dashboard.html" target="_blank">
+        <span class="no">P-看板</span><h3>数据看板（管理者）</h3>
+        <p>GMV/订单量/支付转化率/异常四卡、SVG 折线趋势、国家销量排行、「今日航线」数据条</p>
+        <div class="go">查看页面 →</div>
+      </a>
+      <a class="card" href="p-sales.html" target="_blank">
+        <span class="no">P-销售</span><h3>销售 · 客户与渠道</h3>
+        <p><b>客户账户实时数据</b>（余额/积分/消费/活跃）、<b>分销渠道管理</b>（渠道码 + 企业/订单/GMV 统计）</p>
+        <div class="go">查看页面 →</div>
+      </a>
+      <a class="card" href="p-order.html" target="_blank">
+        <span class="no">P-交付</span><h3>交付 · 订单处理</h3>
+        <p>分管客户订单、<b>分派/改派供应商</b>、签证状态维护、退款审批、异常介入、交付对账</p>
+        <div class="go">查看页面 →</div>
+      </a>
+      <a class="card" href="p-finance.html" target="_blank">
+        <span class="no">P-财务</span><h3>财务 · 账单对账</h3>
+        <p><b>各客户实时账单</b> + 导出、<b>对公充值确认入账</b>、<b>各供应商实时账单对账</b>、打款登记</p>
+        <div class="go">查看页面 →</div>
+      </a>
+      <a class="card" href="p-field.html" target="_blank">
+        <span class="no">P-外勤</span><h3>外勤 · 陪同回执</h3>
+        <p>手机端今日陪同任务（企业/申请人/使领馆/场次）、<b>陪同回执上传</b>（照片+受理号+备注，同步交付）</p>
+        <div class="go">查看页面 →</div>
+      </a>
+      <a class="card" href="p-product.html" target="_blank">
+        <span class="no">P-产品</span><h3>产品管理（管理者）</h3>
+        <p>国家/类型筛选、产品表格（价格/时长/状态）、上下架开关、新增产品、材料清单维护</p>
+        <div class="go">查看页面 →</div>
+      </a>
+      <a class="card" href="p-supplier.html" target="_blank">
+        <span class="no">P-供应商</span><h3>供应商管理（管理者）</h3>
+        <p>供应商表格（联系人/入驻状态/分账比例/星级评级）、<b>新增供应商（仅管理者）</b>、冻结/清退</p>
+        <div class="go">查看页面 →</div>
+      </a>
+      <a class="card" href="p-admin.html" target="_blank">
+        <span class="no">P-权限</span><h3>权限与主体（管理者）</h3>
+        <p><b>新增客户 / 新增供应商</b>（仅管理者）、五角色权限矩阵、账号与交付分管配置</p>
+        <div class="go">查看页面 →</div>
+      </a>
+      <a class="card" href="style-guide.html" target="_blank">
+        <span class="no">指南</span><h3>设计风格指南</h3>
+        <p>「环球驿站」设计规范：色彩体系、字体与圆角、旅行文书视觉隐喻（登机牌/航线图/印章/护照细线）</p>
+        <div class="go">查看设计规范 →</div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="ft">环球驿站 · 企业签证服务平台 · 2026</div>
+</body>
+</html>

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>签证详情 · 环球驿站</title>
+<style>
+  :root{
+    --brand-green:#006241; --brand-deep:#1E3932; --brand-cream:#F7F4EE;
+    --accent-gold:#CBA258;
+    --text-primary:#1E3932; --text-secondary:#6B7B74; --divider:#E8E3D8;
+    --st-ongoing:#3D7A5F; --st-pending:#A87B2F; --st-error:#A5483D;
+    --shadow-card:0 4px 16px rgba(30,57,50,.06);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+  body{background:#EAE6DC;padding:36px 30px 40px}
+  .page-title{font-size:20px;color:var(--text-primary);font-weight:600;margin-bottom:6px}
+  .page-sub{font-size:12px;color:var(--text-secondary);margin-bottom:8px}
+  .page-sub a{color:var(--brand-green);text-decoration:none}
+  .flow{display:flex;gap:72px;align-items:flex-start;overflow-x:auto;padding:36px 0 20px}
+  .screen-wrap{position:relative;flex-shrink:0}
+  .screen-label{position:absolute;top:-30px;left:2px;font-size:12px;color:var(--text-secondary);white-space:nowrap}
+  .screen-label b{color:var(--brand-deep);font-weight:600;margin-right:8px}
+  .arrow{position:absolute;top:390px;right:-52px;font-size:22px;color:#B9B2A2}
+  .phone{width:375px;height:812px;background:var(--brand-cream);border:1px solid #CBC4B4;border-radius:48px;overflow:hidden;position:relative;box-shadow:0 12px 32px rgba(30,57,50,.12)}
+  .statusbar{height:30px;display:flex;justify-content:space-between;align-items:center;padding:0 18px;font-size:12px;color:var(--text-secondary);position:relative;z-index:3}
+  .statusbar.on-dark{color:rgba(247,244,238,.9)}
+  .scroll{height:calc(100% - 30px);overflow-y:auto;padding-bottom:96px}
+  .ico{width:20px;height:20px;display:inline-block;vertical-align:middle}
+  .ico.sm{width:16px;height:16px}
+  /* ===== 头部：纯色深墨绿 ===== */
+  .hero{height:212px;margin-top:-30px;padding-top:30px;background:var(--brand-deep);position:relative;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden}
+  .hero .code-wm{position:absolute;top:38px;right:20px;font-size:64px;font-weight:600;letter-spacing:6px;color:rgba(247,244,238,.10);z-index:1}
+  .hero .route{position:absolute;top:56px;left:22px;z-index:1;font-size:12px;color:rgba(247,244,238,.85);letter-spacing:2px;display:flex;align-items:center;gap:7px}
+  .hero .route .rl{flex:0 0 34px;border-top:1px solid rgba(247,244,238,.4)}
+  .hero .route .ico{width:16px;height:16px;color:rgba(247,244,238,.9)}
+  .hero .cap{position:relative;z-index:2;padding:0 20px 32px;color:var(--brand-cream)}
+  .hero .cap .c-name{font-size:20px;font-weight:600;letter-spacing:1px}
+  .hero .cap .c-sub{font-size:12px;color:rgba(247,244,238,.78);margin-top:5px}
+  .hero .cap .c-badge{display:inline-block;margin-top:10px;font-size:12px;color:var(--brand-cream);border:1px solid rgba(247,244,238,.45);border-radius:6px;padding:2px 9px;letter-spacing:1px}
+  /* ===== 登机牌信息钉（仅投影） ===== */
+  .pins{display:flex;gap:10px;margin:-26px 20px 0;position:relative;z-index:4}
+  .pin{flex:1;background:#fff;border-radius:12px;box-shadow:0 8px 20px rgba(30,57,50,.10);padding:13px 8px 11px;text-align:center}
+  .pin .v{font-size:16px;font-weight:600;color:var(--brand-deep);font-variant-numeric:tabular-nums}
+  .pin .v.gold{color:var(--accent-gold);font-size:20px}
+  .pin .k{font-size:12px;color:var(--text-secondary);margin-top:5px}
+  .sec{background:#fff;border-radius:12px;margin:14px 20px 0;padding:16px;box-shadow:var(--shadow-card)}
+  .sec-t{font-size:16px;color:var(--text-primary);font-weight:600;border-left:3px solid var(--brand-green);padding-left:9px;margin-bottom:12px}
+  .kv{display:flex;justify-content:space-between;font-size:14px;color:var(--text-secondary);padding:9px 0;border-bottom:1px dashed var(--divider)}
+  .kv:last-child{border-bottom:none}
+  .kv b{color:var(--text-primary);font-weight:600}
+  .kv b .lk{color:var(--brand-green);font-weight:400}
+  /* ===== 材料 checklist ===== */
+  .mat{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid #F0EBE0;font-size:14px;color:var(--text-primary);cursor:pointer}
+  .mat:last-child{border-bottom:none}
+  .mat .ck{width:20px;height:20px;border:1.5px solid var(--brand-green);border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;transition:background .2s}
+  .mat.done .ck{background:var(--brand-green)}
+  .mat.done .mt{color:var(--text-secondary);text-decoration:line-through}
+  .mat .tag{margin-left:auto;font-size:12px;color:var(--brand-green);border:1px solid rgba(0,98,65,.3);background:rgba(0,98,65,.05);border-radius:6px;padding:0 7px;flex-shrink:0}
+  .mat .tag.opt{color:var(--text-secondary);border-color:var(--divider);background:transparent}
+  .mat-progress{margin-top:10px;font-size:12px;color:var(--text-secondary)}
+  .mat-progress b{color:var(--brand-green)}
+  /* ===== 办理流程（迷你航线） ===== */
+  .step{display:flex;gap:12px;font-size:14px;color:var(--text-primary);position:relative;padding-bottom:20px}
+  .step:last-child{padding-bottom:2px}
+  .step::before{content:"";position:absolute;left:10px;top:24px;bottom:0;border-left:2px dotted var(--divider)}
+  .step:last-child::before{display:none}
+  .step .n{width:22px;height:22px;border-radius:50%;background:rgba(0,98,65,.06);border:1.5px solid var(--brand-green);color:var(--brand-green);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;position:relative;z-index:1}
+  .step .n .ico{width:13px;height:13px}
+  .step .sd{font-size:12px;color:var(--text-secondary);margin-top:3px}
+  .bottom-bar{position:absolute;bottom:0;left:0;right:0;background:rgba(255,255,255,.96);border-top:1px solid var(--divider);padding:12px 20px 16px;display:flex;gap:14px;align-items:center}
+  .consult-sm{width:52px;text-align:center;font-size:12px;color:var(--brand-green)}
+  .consult-sm .c{width:34px;height:34px;border:1.5px solid var(--brand-green);border-radius:50%;margin:0 auto 4px;display:flex;align-items:center;justify-content:center;background:rgba(0,98,65,.05)}
+  .consult-sm .c .ico{width:17px;height:17px}
+  .btn-main{background:var(--brand-green);color:var(--brand-cream);border-radius:999px;text-align:center;font-size:16px;padding:13px 0;font-weight:600;letter-spacing:2px;transition:opacity .2s}
+  .btn-main:hover{opacity:.92}
+  .fee-note{font-size:14px;color:var(--text-secondary);line-height:1.9}
+  .fee-note em{font-style:normal;color:var(--text-primary);font-weight:600}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-plane" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 3.5 4 10.8l6.6 2.4 2.5 6.6 7.4-16.3Z"/><path d="M10.6 13.2 20.5 3.5"/></g></symbol>
+    <symbol id="i-headset" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 13a7.5 7.5 0 0 1 15 0"/><rect x="3.5" y="12.5" width="4" height="6" rx="2"/><rect x="16.5" y="12.5" width="4" height="6" rx="2"/><path d="M18.5 18.5a3.5 3.5 0 0 1-3.5 2.5h-2"/></g></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5V15"/><path d="M7.5 10.5 12 15l4.5-4.5"/><path d="M4.5 18.5h15"/></g></symbol>
+    <symbol id="i-doc" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2.5H6.5A1.5 1.5 0 0 0 5 4v16a1.5 1.5 0 0 0 1.5 1.5h11A1.5 1.5 0 0 0 19 20V7.5z"/><path d="M14 2.5v5h5"/><path d="M8.5 12.5h7M8.5 16h7"/></g></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 0 1-8 8H4l1.6-3.2A8 8 0 1 1 20 12Z"/><path d="M8.5 11h7M8.5 14h4.5"/></g></symbol>
+  </defs>
+</svg>
+
+<div class="page-title">签证详情 · 美国 B1/B2</div>
+<div class="page-sub">签证信息、材料清单、办理流程与在线答疑</div>
+
+<div class="flow">
+  <!-- 屏1：详情上半部分 -->
+  <div class="screen-wrap">
+    <div class="screen-label"><b>01</b>签证详情 - 头部信息</div>
+    <div class="phone">
+      <div class="statusbar on-dark"><span>9:41</span><span>‹ 返回</span><span>···</span></div>
+      <div class="scroll">
+        <div class="hero">
+          <div class="route">PEK<span class="rl"></span><svg class="ico"><use href="#i-plane"/></svg><span class="rl"></span>LAX</div>
+          <div class="code-wm">US</div>
+          <div class="cap">
+            <div class="c-name">美国 · B1/B2 旅游签证</div>
+            <div class="c-sub">United States · B1/B2 Tourist Visa</div>
+            <div class="c-badge">10年多次往返 · 出签率 96%</div>
+          </div>
+        </div>
+        <!-- 三枚登机牌信息钉 -->
+        <div class="pins">
+          <div class="pin"><div class="v gold">¥1895</div><div class="k">价格 /人</div></div>
+          <div class="pin"><div class="v">29 工作日</div><div class="k">办理时长</div></div>
+          <div class="pin"><div class="v">全国受理</div><div class="k">受理范围</div></div>
+        </div>
+        <div class="sec">
+          <div class="sec-t">签证信息</div>
+          <div class="kv"><span>面试</span><b>需面试（<span class="lk">可预约陪签 ›</span>）</b></div>
+          <div class="kv"><span>有效期 / 停留</span><b>10年多次 / 最长180天</b></div>
+          <div class="kv"><span>入境次数</span><b>多次往返</b></div>
+          <div class="kv"><span>咨询电话</span><b><span class="lk">400-888-6666</span></b></div>
+        </div>
+        <div class="sec">
+          <div class="sec-t">所需材料 <span style="font-size:12px;color:var(--text-secondary);font-weight:400">（点击可勾选备齐）</span></div>
+          <div class="mat done"><div class="ck">✓</div><div class="mt">护照原件（有效期6个月以上）</div></div>
+          <div class="mat done"><div class="ck">✓</div><div class="mt">DS-160 申请表</div><span class="tag">平台代填</span></div>
+          <div class="mat"><div class="ck"></div><div class="mt">51×51mm 白底证件照 ×2</div></div>
+          <div class="mat"><div class="ck"></div><div class="mt">在职证明 / 营业执照副本</div></div>
+          <div class="mat"><div class="ck"></div><div class="mt">近6个月银行流水</div></div>
+          <div class="mat"><div class="ck"></div><div class="mt">行程单 / 酒店预订单</div><span class="tag opt">可选</span></div>
+          <div class="mat-progress">已备齐 <b>2 / 6</b> 项 · 备齐后材料预审更快</div>
+          <div style="display:flex;gap:10px;margin-top:12px">
+            <div style="flex:1;display:flex;align-items:center;justify-content:center;gap:7px;border:1.5px solid rgba(0,98,65,.4);color:var(--brand-green);border-radius:999px;padding:10px 0;font-size:14px;font-weight:600"><svg class="ico" style="width:16px;height:16px"><use href="#i-download"/></svg>材料清单下载（PDF）</div>
+            <div style="flex:1;display:flex;align-items:center;justify-content:center;gap:7px;border:1.5px solid var(--divider);color:var(--text-secondary);border-radius:999px;padding:10px 0;font-size:14px"><svg class="ico" style="width:16px;height:16px"><use href="#i-doc"/></svg>在职证明模板</div>
+          </div>
+        </div>
+      </div>
+      <div class="bottom-bar">
+        <div class="consult-sm"><div class="c"><svg class="ico"><use href="#i-headset"/></svg></div>咨询</div>
+        <div class="btn-main" style="flex:1">开始办理</div>
+      </div>
+    </div>
+    <div class="arrow">→</div>
+  </div>
+
+  <!-- 屏2：详情下半部分 -->
+  <div class="screen-wrap">
+    <div class="screen-label"><b>02</b>签证详情 - 流程与费用</div>
+    <div class="phone">
+      <div class="statusbar on-dark" style="background:var(--brand-deep)"><span>9:41</span><span>‹ 返回</span><span>···</span></div>
+      <div class="scroll" style="padding-top:14px">
+        <div class="sec" style="margin-top:0">
+          <div class="sec-t">办理流程 <span style="font-size:12px;color:var(--text-secondary);font-weight:400">（五段航线）</span></div>
+          <div class="step"><div class="n">1</div><div><div>下单支付</div><div class="sd">选择出行日期与申请人</div></div></div>
+          <div class="step"><div class="n">2</div><div><div>准备并寄出材料</div><div class="sd">按清单邮寄护照等材料</div></div></div>
+          <div class="step"><div class="n">3</div><div><div>材料审核</div><div class="sd">供应商1-2个工作日预审</div></div></div>
+          <div class="step"><div class="n">4</div><div><div>预约面试 / 送签</div><div class="sd">使领馆办理 29 个工作日</div></div></div>
+          <div class="step"><div class="n"><svg class="ico"><use href="#i-plane"/></svg></div><div><div>出签回寄</div><div class="sd">护照顺丰回寄，可跟踪物流</div></div></div>
+        </div>
+        <div class="sec">
+          <div class="sec-t">在线答疑 <span style="font-size:12px;color:var(--text-secondary);font-weight:400">（常见问题 + 人工会话）</span></div>
+          <div class="kv"><span style="display:flex;align-items:center;gap:8px;color:var(--text-primary)"><svg class="ico sm" style="color:var(--brand-green)"><use href="#i-chat"/></svg>银行流水需要几个月？</span><b class="lk" style="font-weight:400">查看 ›</b></div>
+          <div class="kv"><span style="display:flex;align-items:center;gap:8px;color:var(--text-primary)"><svg class="ico sm" style="color:var(--brand-green)"><use href="#i-chat"/></svg>旧护照有美签记录要一起寄吗？</span><b class="lk" style="font-weight:400">查看 ›</b></div>
+          <div class="kv"><span style="display:flex;align-items:center;gap:8px;color:var(--text-primary)"><svg class="ico sm" style="color:var(--brand-green)"><use href="#i-headset"/></svg>人工答疑（交付顾问在线）</span><b class="lk" style="font-weight:400">进入会话 ›</b></div>
+        </div>
+        <div class="sec">
+          <div class="sec-t">费用说明</div>
+          <div class="fee-note"><em>费用包含：</em>签证费 + 服务费 + 材料预审<br><em>费用不含：</em>快递费、面试交通费、加急费</div>
+        </div>
+        <div class="sec">
+          <div class="sec-t">退改规则</div>
+          <div class="fee-note">· 未送签前可申请退款，收取10%手续费<br>· 已送签不支持退款<br>· 拒签按套餐约定退还服务费</div>
+        </div>
+      </div>
+      <div class="bottom-bar">
+        <div class="consult-sm"><div class="c"><svg class="ico"><use href="#i-headset"/></svg></div>咨询</div>
+        <div class="btn-main" style="flex:1">开始办理</div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+// 材料 checklist 勾选交互
+document.querySelectorAll('.mat').forEach(function(m){
+  m.addEventListener('click',function(){
+    m.classList.toggle('done');
+    m.querySelector('.ck').textContent = m.classList.contains('done') ? '✓' : '';
+    var sec = m.closest('.sec');
+    var total = sec.querySelectorAll('.mat').length;
+    var done = sec.querySelectorAll('.mat.done').length;
+    var bar = sec.querySelector('.mat-progress b');
+    if(bar) bar.textContent = done + ' / ' + total;
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>登录 · 环球驿站</title>
+<style>
+  :root{
+    --brand-green:#006241; --brand-deep:#1E3932; --brand-cream:#F7F4EE;
+    --accent-gold:#CBA258;
+    --text-primary:#1E3932; --text-secondary:#6B7B74; --divider:#E8E3D8;
+    --st-ongoing:#3D7A5F; --st-pending:#A87B2F; --st-error:#A5483D;
+    --shadow-card:0 4px 16px rgba(30,57,50,.06);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+  body{background:#EAE6DC;padding:36px 30px 40px}
+  .page-title{font-size:20px;color:var(--text-primary);font-weight:600;margin-bottom:6px}
+  .page-sub{font-size:12px;color:var(--text-secondary);margin-bottom:8px}
+  .page-sub a{color:var(--brand-green);text-decoration:none}
+  .flow{display:flex;gap:72px;align-items:flex-start;overflow-x:auto;padding:36px 0 20px}
+  .screen-wrap{position:relative;flex-shrink:0}
+  .screen-label{position:absolute;top:-30px;left:2px;font-size:12px;color:var(--text-secondary);white-space:nowrap}
+  .screen-label b{color:var(--brand-deep);font-weight:600;margin-right:8px}
+  .arrow{position:absolute;top:390px;right:-52px;font-size:22px;color:#B9B2A2}
+  .phone{width:375px;height:812px;background:var(--brand-cream);border:1px solid #CBC4B4;border-radius:48px;overflow:hidden;position:relative;box-shadow:0 12px 32px rgba(30,57,50,.12)}
+  .statusbar{height:30px;display:flex;justify-content:space-between;align-items:center;padding:0 18px;font-size:12px;color:var(--text-secondary)}
+  .statusbar.on-dark{color:rgba(247,244,238,.85)}
+  .ico{width:20px;height:20px;display:inline-block;vertical-align:middle}
+  .ico.sm{width:16px;height:16px}
+  .ico.lg{width:24px;height:24px}
+  /* ===== 品牌登录页：纯色深绿底 + 奶油白卡 ===== */
+  .login-bg{height:100%;background:var(--brand-deep);position:relative;overflow:hidden}
+  .login-brand{padding:76px 36px 0;position:relative;z-index:1}
+  .brand-mark{width:64px;height:64px;border-radius:50%;background:var(--brand-green);display:flex;align-items:center;justify-content:center;color:var(--brand-cream)}
+  .brand-mark .ico{width:30px;height:30px}
+  .login-brand .bn{margin-top:16px;color:var(--brand-cream);font-size:20px;font-weight:600;letter-spacing:2px}
+  .login-brand .bn small{display:block;font-size:12px;color:rgba(247,244,238,.55);font-weight:400;letter-spacing:4px;margin-top:5px}
+  .login-brand .bs{margin-top:12px;font-size:12px;color:rgba(247,244,238,.7);line-height:1.9}
+  .login-card{position:absolute;left:24px;right:24px;bottom:96px;background:var(--brand-cream);border-radius:12px;padding:24px 22px 20px;box-shadow:0 14px 34px rgba(0,0,0,.28);z-index:2}
+  .login-card .lc-t{font-size:16px;font-weight:600;color:var(--text-primary);text-align:center;margin-bottom:16px}
+  .login-card .lc-t small{display:block;font-size:12px;color:var(--text-secondary);font-weight:400;margin-top:6px}
+  .btn-main{background:var(--brand-green);color:var(--brand-cream);border-radius:999px;text-align:center;font-size:16px;padding:13px 0;font-weight:600;letter-spacing:1px;transition:opacity .2s}
+  .btn-main.off{background:#C9C2B2;color:#F2EEE4}
+  .btn-wx{background:#fff;border:1px solid var(--divider);color:var(--text-primary);border-radius:999px;text-align:center;font-size:14px;padding:12px 0;margin-top:12px;display:flex;align-items:center;justify-content:center;gap:7px}
+  .btn-wx .ico{width:18px;height:18px}
+  .agree{display:flex;gap:7px;font-size:12px;color:rgba(247,244,238,.7);align-items:flex-start;justify-content:center;position:absolute;bottom:56px;left:30px;right:30px;z-index:2}
+  .cb{width:14px;height:14px;border:1.5px solid rgba(247,244,238,.8);border-radius:50%;flex-shrink:0;margin-top:2px;color:#fff;font-size:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s}
+  .cb.on{background:var(--brand-green);border-color:var(--brand-green)}
+  .agree b{color:var(--brand-cream);font-weight:400;text-decoration:underline;text-underline-offset:3px}
+  .login-foot{position:absolute;bottom:26px;left:0;right:0;text-align:center;font-size:12px;color:rgba(247,244,238,.4);letter-spacing:2px;z-index:1}
+  /* ===== 隐私政策 ===== */
+  .navbar{height:44px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600;color:var(--text-primary);border-bottom:1px solid var(--divider);position:relative;background:#fff}
+  .navbar .back{position:absolute;left:16px;color:var(--text-secondary);font-size:18px}
+  .policy{padding:18px 20px;font-size:12px;color:var(--text-secondary);line-height:2}
+  .policy h2{font-size:16px;color:var(--text-primary);margin-bottom:6px;font-weight:600}
+  .policy .meta{font-size:12px;color:#B9B2A2;border-bottom:1px solid var(--divider);padding-bottom:12px;margin-bottom:6px}
+  .policy h4{font-size:14px;color:var(--text-primary);font-weight:600;margin-top:14px;border-left:3px solid var(--brand-green);padding-left:8px}
+  .policy .end{color:#B9B2A2;margin-top:16px;text-align:center;font-size:12px}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-plane" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 3.5 4 10.8l6.6 2.4 2.5 6.6 7.4-16.3Z"/><path d="M10.6 13.2 20.5 3.5"/></g></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M20 12a8 8 0 0 1-8 8c-1.4 0-2.8-.4-4-1l-4 1 1.2-3.6A8 8 0 1 1 20 12Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  </defs>
+</svg>
+
+<div class="page-title">登录与企业绑定</div>
+<div class="page-sub">手机号一键登录 → 企业身份绑定 → 隐私政策</div>
+
+<div class="flow">
+  <!-- 屏1：登录页（未勾选） -->
+  <div class="screen-wrap">
+    <div class="screen-label"><b>01</b>登录页</div>
+    <div class="phone">
+      <div class="login-bg">
+        <div class="statusbar on-dark"><span>9:41</span><span></span><span>···</span></div>
+        <div class="login-brand">
+          <div class="brand-mark"><svg class="ico"><use href="#i-plane"/></svg></div>
+          <div class="bn">环球驿站<small>GLOBAL VISA ATELIER</small></div>
+          <div class="bs">世界那么大，签证交给我们<br>我们承诺不泄露用户信息</div>
+        </div>
+        <div class="login-card">
+          <div class="lc-t">欢迎回来<small>登录后开启您的下一段旅程</small></div>
+          <div class="btn-main off">手机号一键登录</div>
+          <div class="btn-wx"><svg class="ico"><use href="#i-chat"/></svg>微信授权登录（其他方式）</div>
+        </div>
+        <div class="agree"><div class="cb"></div><div>登录即代表同意<b>《用户协议》《隐私政策》</b></div></div>
+        <div class="login-foot">30+ 目的地 · 全程可追踪</div>
+      </div>
+    </div>
+    <div class="arrow">→</div>
+  </div>
+
+  <!-- 屏2：登录页（已勾选） -->
+  <div class="screen-wrap">
+    <div class="screen-label"><b>02</b>登录页 - 已勾选协议</div>
+    <div class="phone">
+      <div class="login-bg">
+        <div class="statusbar on-dark"><span>9:41</span><span></span><span>···</span></div>
+        <div class="login-brand">
+          <div class="brand-mark"><svg class="ico"><use href="#i-plane"/></svg></div>
+          <div class="bn">环球驿站<small>GLOBAL VISA ATELIER</small></div>
+          <div class="bs">世界那么大，签证交给我们<br>我们承诺不泄露用户信息</div>
+        </div>
+        <div class="login-card">
+          <div class="lc-t">欢迎回来<small>本机号码已识别，一键快速登录</small></div>
+          <div class="btn-main">手机号一键登录（138****1234）</div>
+          <div class="btn-wx"><svg class="ico"><use href="#i-chat"/></svg>微信授权登录（其他方式）</div>
+        </div>
+        <div class="agree"><div class="cb on">✓</div><div>登录即代表同意<b>《用户协议》《隐私政策》</b></div></div>
+        <div class="login-foot">30+ 目的地 · 全程可追踪</div>
+      </div>
+    </div>
+    <div class="arrow">→</div>
+  </div>
+
+  <!-- 屏3：企业身份绑定 -->
+  <div class="screen-wrap">
+    <div class="screen-label"><b>03</b>企业身份绑定</div>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span></span><span>···</span></div>
+      <div class="navbar"><span class="back">‹</span>绑定所属企业</div>
+      <div style="height:calc(100% - 74px);overflow-y:auto;padding-bottom:24px">
+        <div style="margin:14px 20px 0;background:#fff;border-radius:12px;padding:18px 16px;box-shadow:0 4px 16px rgba(30,57,50,.06)">
+          <div style="font-size:16px;font-weight:600;color:var(--text-primary);border-left:3px solid var(--brand-green);padding-left:9px;margin-bottom:6px">输入企业邀请码</div>
+          <div style="font-size:12px;color:var(--text-secondary);line-height:1.8">向企业管理员或平台销售索取 8 位邀请码，绑定后即可按企业协议价下单，订单计入企业账单。</div>
+          <div style="display:flex;gap:10px;margin-top:14px">
+            <div style="flex:1;border:1px solid var(--divider);border-radius:10px;padding:12px;font-size:14px;color:#B9B2A2;letter-spacing:2px">INV-8K2X7712</div>
+            <div style="background:var(--brand-green);color:var(--brand-cream);border-radius:10px;padding:12px 18px;font-size:14px;font-weight:600">绑定</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;margin:16px 20px;color:var(--text-secondary);font-size:12px"><span style="flex:1;border-top:1px dashed var(--divider)"></span>或<span style="flex:1;border-top:1px dashed var(--divider)"></span></div>
+        <div style="margin:0 20px;background:#fff;border-radius:12px;padding:18px 16px;box-shadow:0 4px 16px rgba(30,57,50,.06)">
+          <div style="font-size:16px;font-weight:600;color:var(--text-primary);border-left:3px solid var(--brand-green);padding-left:9px;margin-bottom:12px">搜索企业申请加入</div>
+          <div style="border:1px solid var(--divider);border-radius:10px;padding:12px;font-size:14px;color:#B9B2A2">输入企业全称，如：星辰科技有限公司</div>
+          <div style="margin-top:12px;padding:11px 0;border-top:1px solid #F0EBE0;display:flex;justify-content:space-between;align-items:center;font-size:14px"><span>星辰科技有限公司<span style="font-size:12px;color:var(--text-secondary)">　86 名员工</span></span><span style="font-size:12px;color:var(--brand-green);border:1px solid rgba(0,98,65,.35);border-radius:999px;padding:3px 12px;font-weight:600">申请加入</span></div>
+          <div style="padding:11px 0;border-top:1px solid #F0EBE0;display:flex;justify-content:space-between;align-items:center;font-size:14px"><span>远航国际物流<span style="font-size:12px;color:var(--text-secondary)">　54 名员工</span></span><span style="font-size:12px;color:var(--brand-green);border:1px solid rgba(0,98,65,.35);border-radius:999px;padding:3px 12px;font-weight:600">申请加入</span></div>
+          <div style="font-size:12px;color:var(--text-secondary);margin-top:10px;line-height:1.8">· 申请后由企业管理员审核生效<br>· 未绑定企业可浏览产品与费用，下单前须完成绑定</div>
+        </div>
+        <div style="text-align:center;font-size:12px;color:#B9B2A2;padding:14px 0">企业管理员可通过后台开通 SSO 免登</div>
+      </div>
+    </div>
+    <div class="arrow">→</div>
+  </div>
+
+  <!-- 屏4：隐私政策 -->
+  <div class="screen-wrap">
+    <div class="screen-label"><b>04</b>隐私政策</div>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span></span><span>···</span></div>
+      <div class="navbar"><span class="back">‹</span>隐私政策</div>
+      <div style="height:calc(100% - 74px);overflow-y:auto">
+        <div class="policy">
+          <h2>用户个人信息保护及隐私政策</h2>
+          <div class="meta">更新日期：2026-08-04　生效日期：2026-08-04</div>
+          本平台深知个人信息对您的重要性，并会尽全力保护您的个人信息安全可靠。我们致力于维持您对我们的信任，恪守以下原则保护您的个人信息：权责一致原则、目的明确原则、选择同意原则、最少够用原则、确保安全原则、主体参与原则、公开透明原则。
+          <h4>一、我们收集的信息</h4>
+          1. 账号信息：手机号、微信昵称头像；<br>
+          2. 办签资料：姓名、护照号、护照有效期等敏感信息，加密存储；<br>
+          3. 设备信息：设备型号、操作系统版本，用于安全风控。
+          <h4>二、信息的使用</h4>
+          仅用于签证代办履约、订单通知与客服服务；不会用于与办签无关的用途。
+          <h4>三、信息的共享</h4>
+          仅向为您履约的签证供应商提供必要信息，并签署保密协议；不会向任何第三方出售您的个人信息。
+          <h4>四、您的权利</h4>
+          查询、更正、删除个人信息；注销账号；撤回已同意的授权。
+          <h4>五、联系我们</h4>
+          客服邮箱 support@globalwaystation.com
+          <div class="end">我们非常重视您的个人信息保护，将严格依据相关法律法规处理您的信息。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+// 协议勾选：勾选后主按钮高亮
+document.querySelectorAll('.login-bg').forEach(function(bg){
+  var cb=bg.querySelector('.cb'), btn=bg.querySelector('.login-card .btn-main');
+  cb.addEventListener('click',function(){
+    cb.classList.toggle('on');
+    cb.textContent=cb.classList.contains('on')?'✓':'';
+    if(btn){btn.classList.toggle('off',!cb.classList.contains('on'));}
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>订单管理 · 供应商工作台</title>
+<style>
+  :root{
+    --brand-green:#006241; --brand-deep:#1E3932; --brand-cream:#F7F4EE;
+    --accent-gold:#CBA258; --travel-blue:#2577E3;
+    --text-primary:#1E3932; --text-secondary:#6B7B74; --divider:#E8E3D8;
+    --st-doing:#3D7A5F; --st-wait:#A87B2F; --st-err:#A5483D;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+  body{background:#ECE7DC;padding:30px;font-size:14px;color:var(--text-primary)}
+  .ic{width:18px;height:18px;flex-shrink:0}
+  .page-title{font-size:20px;color:var(--brand-deep);font-weight:600;margin-bottom:6px}
+  .page-sub{font-size:12px;color:var(--text-secondary);margin-bottom:20px}
+  .page-sub a{color:var(--brand-green);text-decoration:none}
+  .frame{width:1440px;height:900px;background:var(--brand-cream);border-radius:12px;overflow:hidden;display:flex;box-shadow:0 12px 40px rgba(30,57,50,.14)}
+  /* 左侧导航：深墨绿 + 奶油白文字，导航项高 40px、图标与文字间距 12px */
+  .side{width:220px;background:var(--brand-deep);color:var(--brand-cream);flex-shrink:0;display:flex;flex-direction:column}
+  .side .logo{height:64px;display:flex;align-items:center;gap:12px;padding:0 20px;font-size:15px;font-weight:600;color:var(--brand-cream);border-bottom:1px solid rgba(247,244,238,.12)}
+  .side .logo .dot{width:28px;height:28px;border-radius:50%;background:var(--brand-green);display:flex;align-items:center;justify-content:center;color:var(--brand-cream)}
+  .side .logo .dot .ic{width:15px;height:15px}
+  .side .nav{padding:12px 0;font-size:14px}
+  .side .nav div,.side .nav a{height:40px;display:flex;align-items:center;gap:12px;padding:0 16px;margin:2px 0;cursor:pointer;color:rgba(247,244,238,.72);border-left:3px solid transparent;transition:background .15s;text-decoration:none;font-size:14px}
+  .side .nav div:hover,.side .nav a:hover{background:rgba(247,244,238,.06);color:var(--brand-cream)}
+  .side .nav .on{background:rgba(247,244,238,.08);color:var(--brand-cream);border-left:3px solid var(--brand-cream);font-weight:600}
+  .side .ft{margin-top:auto;padding:16px 20px;font-size:12px;color:rgba(247,244,238,.4);border-top:1px solid rgba(247,244,238,.12)}
+  .main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+  /* 顶部栏：面包屑 + 头像 */
+  .topbar{height:64px;background:#fff;border-bottom:1px solid var(--divider);display:flex;align-items:center;padding:0 24px;font-size:14px;color:var(--text-secondary)}
+  .crumb b{color:var(--text-primary);font-weight:600}
+  .topbar .user{margin-left:auto;display:flex;align-items:center;gap:12px;font-size:14px;color:var(--text-primary)}
+  .topbar .bell{position:relative;cursor:pointer;color:var(--text-secondary);display:flex}
+  .topbar .bell i{position:absolute;top:-6px;right:-9px;background:var(--brand-green);color:#fff;border-radius:8px;font-size:12px;padding:0 5px;font-style:normal;transform:scale(.85)}
+  .topbar .avatar{width:32px;height:32px;border-radius:50%;background:var(--brand-green);color:var(--brand-cream);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600}
+  .content{flex:1;padding:20px;overflow:auto}
+  .card{background:#fff;border:1px solid var(--divider);border-radius:12px;padding:16px;margin-bottom:12px}
+  /* 状态 Tab + 品牌绿角标 */
+  .tabs{display:flex;border-bottom:1px solid var(--divider);font-size:14px;color:var(--text-secondary)}
+  .tabs span{padding:12px 20px;cursor:pointer;border-bottom:2px solid transparent}
+  .tabs span.on{color:var(--brand-green);border-bottom:2px solid var(--brand-green);font-weight:600}
+  .tabs .badge{background:var(--brand-green);color:#fff;border-radius:10px;font-size:12px;padding:0 7px;margin-left:6px;font-style:normal;transform:scale(.92);display:inline-block}
+  .filters{display:flex;gap:12px;align-items:center;font-size:14px;color:var(--text-secondary);flex-wrap:wrap}
+  .ipt{border:1px solid var(--divider);border-radius:999px;background:var(--brand-cream);color:#9AA79F;font-size:14px;padding:8px 16px;min-width:170px}
+  .btn{background:var(--brand-green);color:#fff;border-radius:999px;font-size:14px;padding:8px 22px;border:none;cursor:pointer}
+  .btn-line{border:1px solid var(--divider);background:#fff;color:var(--text-secondary);border-radius:999px;font-size:14px;padding:8px 18px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+  .btn-line .ic{width:15px;height:15px}
+  /* 表格：无竖线、暖灰横线、行高 48px、hover 仅奶油色 */
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th{color:var(--text-secondary);font-weight:400;padding:10px 12px;border-bottom:1px solid var(--divider);text-align:left;white-space:nowrap;font-size:12px}
+  td{height:48px;padding:0 12px;border-bottom:1px solid var(--divider);color:var(--text-primary);white-space:nowrap}
+  tbody tr:hover{background:var(--brand-cream)}
+  .mono{font-variant-numeric:tabular-nums}
+  .amt{font-weight:600;color:var(--accent-gold);font-variant-numeric:tabular-nums}
+  /* 状态胶囊：浅色底 + 深字，低饱和三色 */
+  .tag{display:inline-block;border-radius:6px;font-size:12px;padding:2px 10px}
+  .t-wait{background:#F5EEDF;color:var(--st-wait)}
+  .t-doing{background:#E9F1ED;color:var(--st-doing)}
+  .t-err{background:#F5E9E6;color:var(--st-err)}
+  .t-gray{background:#EFEDE7;color:var(--text-secondary)}
+  /* 行内操作 */
+  .op-solid{background:var(--brand-green);color:#fff;border:none;border-radius:999px;font-size:12px;padding:5px 14px;cursor:pointer;margin-right:8px}
+  .op-line{background:#fff;color:var(--text-secondary);border:1px solid var(--divider);border-radius:999px;font-size:12px;padding:5px 14px;cursor:pointer;margin-right:8px}
+  .op-link{color:var(--travel-blue);cursor:pointer;margin-right:8px;font-size:12px;text-decoration:none}
+  .op-link.gray{color:#9AA79F}
+  .pager{display:flex;justify-content:flex-end;align-items:center;gap:8px;padding:16px 0 0;font-size:12px;color:var(--text-secondary)}
+  .pager span{border:1px solid var(--divider);border-radius:8px;padding:5px 12px;background:#fff;cursor:pointer}
+  .pager span.on{background:var(--brand-green);color:#fff;border-color:var(--brand-green)}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-plane" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></symbol>
+    <symbol id="i-order" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2.5H6.5A1.5 1.5 0 0 0 5 4v16a1.5 1.5 0 0 0 1.5 1.5h11A1.5 1.5 0 0 0 19 20V7.5z"/><path d="M14 2.5v5h5"/><path d="M8.5 12.5h7M8.5 16h7"/></symbol>
+    <symbol id="i-finance" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5.5" width="18" height="13.5" rx="2"/><path d="M3 10h18"/><path d="M7 14.5h4"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 9.5a6 6 0 1 0-12 0c0 5-1.8 6.2-1.8 6.2h15.6S18 14.5 18 9.5"/><path d="M10.2 19a2 2 0 0 0 3.6 0"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5.5 19.5c.8-3.2 3.4-4.8 6.5-4.8s5.7 1.6 6.5 4.8"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v10"/><path d="M7.5 10.5 12 15l4.5-4.5"/><path d="M5 19.5h14"/></symbol>
+  </defs>
+</svg>
+<div class="page-title">订单管理</div>
+<div class="page-sub">接单 / 审核材料 / 更新进度</div>
+
+<div class="frame">
+  <div class="side">
+    <div class="logo"><span class="dot"><svg class="ic"><use href="#i-plane"/></svg></span>供应商工作台</div>
+    <div class="nav">
+      <div class="on"><svg class="ic"><use href="#i-order"/></svg>订单管理</div>
+      <div><svg class="ic"><use href="#i-finance"/></svg>结算对账</div>
+      <div><svg class="ic"><use href="#i-bell"/></svg>消息</div>
+      <div><svg class="ic"><use href="#i-user"/></svg>账号</div>
+    </div>
+    <div class="ft">环球驿站 · 供应商工作台</div>
+  </div>
+  <div class="main">
+    <div class="topbar">
+      <span class="crumb">工作台 / <b>订单管理</b></span>
+      <div class="user"><span class="bell"><svg class="ic"><use href="#i-bell"/></svg><i>3</i></span><div class="avatar">XX</div><span>环球签证服务中心（操作员）</span></div>
+    </div>
+    <div class="content">
+      <div class="card" style="padding:0 16px">
+        <div class="tabs">
+          <span class="on">待接单<i class="badge">4</i></span>
+          <span>材料审核中<i class="badge">2</i></span>
+          <span>办理中</span>
+          <span>已完成</span>
+          <span>异常</span>
+        </div>
+      </div>
+      <div class="card filters">
+        <div class="ipt">订单号 / 申请人姓名</div>
+        <div class="ipt">国家 ▾</div>
+        <div class="ipt">下单时间：起 - 止</div>
+        <button class="btn">查询</button>
+        <button class="btn-line">重置</button>
+        <span style="margin-left:auto"></span>
+        <button class="btn-line"><svg class="ic"><use href="#i-download"/></svg>导出</button>
+      </div>
+      <div class="card" style="padding:0 16px 12px">
+        <table>
+          <thead>
+          <tr><th>订单号</th><th>国家/产品</th><th>人数</th><th>金额</th><th>下单时间</th><th>状态</th><th>操作</th></tr>
+          </thead>
+          <tbody>
+          <tr><td class="mono">V202608040012</td><td>美国 · B1/B2旅游签</td><td>2</td><td class="amt">¥3,740</td><td class="mono">08-04 10:22</td><td><span class="tag t-wait">待接单</span></td>
+            <td><button class="op-solid">接单</button><button class="op-line">拒单</button><a class="op-link" href="s-order-detail.html">详情</a></td></tr>
+          <tr><td class="mono">V202608040009</td><td>日本 · 单次旅游签</td><td>1</td><td class="amt">¥399</td><td class="mono">08-04 09:41</td><td><span class="tag t-wait">待接单</span></td>
+            <td><button class="op-solid">接单</button><button class="op-line">拒单</button><a class="op-link" href="s-order-detail.html">详情</a></td></tr>
+          <tr><td class="mono">V202608030031</td><td>韩国 · 五年多次</td><td>3</td><td class="amt">¥2,370</td><td class="mono">08-03 17:05</td><td><span class="tag t-doing">材料审核中</span></td>
+            <td><a class="op-link" href="s-order-detail.html">审核材料</a><a class="op-link" href="s-order-detail.html">详情</a></td></tr>
+          <tr><td class="mono">V202608010017</td><td>澳大利亚 · 600旅游签</td><td>2</td><td class="amt">¥1,998</td><td class="mono">08-01 14:30</td><td><span class="tag t-doing">办理中</span></td>
+            <td><a class="op-link" href="s-order-detail.html">更新进度</a><a class="op-link" href="s-order-detail.html">详情</a></td></tr>
+          <tr><td class="mono">V202607280003</td><td>美国 · B1/B2旅游签</td><td>1</td><td class="amt">¥1,895</td><td class="mono">07-28 11:12</td><td><span class="tag t-doing">使领馆办理中</span></td>
+            <td><a class="op-link" href="s-order-detail.html">录入出签</a><a class="op-link" href="s-order-detail.html">详情</a></td></tr>
+          <tr><td class="mono">V202607200045</td><td>英国 · 标准访客签</td><td>2</td><td class="amt">¥2,198</td><td class="mono">07-20 16:48</td><td><span class="tag t-err">异常 · 材料驳回</span></td>
+            <td><a class="op-link" href="s-order-detail.html">处理异常</a><a class="op-link" href="s-order-detail.html">详情</a></td></tr>
+          <tr><td class="mono">V202606100007</td><td>韩国 · 五年多次</td><td>2</td><td class="amt">¥1,580</td><td class="mono">06-10 09:00</td><td><span class="tag t-gray">已完成</span></td>
+            <td><a class="op-link gray" href="s-order-detail.html">详情</a></td></tr>
+          </tbody>
+        </table>
+        <div class="pager"><span>‹</span><span class="on">1</span><span>2</span><span>3</span><span>›</span><span style="border:none;background:none">共 86 条</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+document.querySelectorAll('.tabs span').forEach(function(s){
+  s.addEventListener('click',function(){
+    s.parentNode.querySelectorAll('span').forEach(function(x){x.classList.remove('on')});
+    s.classList.add('on');
+  });
+});
+</script>
+</body>
+</html>

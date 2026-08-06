@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>企业工作台 · 环球驿站</title>
+<style>
+  :root{
+    --brand-green:#006241; --brand-deep:#1E3932; --brand-cream:#F7F4EE;
+    --accent-gold:#CBA258;
+    --text-primary:#1E3932; --text-secondary:#6B7B74; --divider:#E8E3D8;
+    --st-ongoing:#3D7A5F; --st-pending:#A87B2F; --st-error:#A5483D;
+    --shadow-card:0 4px 16px rgba(30,57,50,.06);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+  body{background:#EAE6DC;padding:36px 30px 40px}
+  .page-title{font-size:20px;color:var(--text-primary);font-weight:600;margin-bottom:6px}
+  .page-sub{font-size:12px;color:var(--text-secondary);margin-bottom:8px}
+  .page-sub a{color:var(--brand-green);text-decoration:none}
+  .flow{display:flex;gap:72px;align-items:flex-start;overflow-x:auto;padding:36px 0 20px}
+  .screen-wrap{position:relative;flex-shrink:0}
+  .screen-label{position:absolute;top:-30px;left:2px;font-size:12px;color:var(--text-secondary);white-space:nowrap}
+  .screen-label b{color:var(--brand-deep);font-weight:600;margin-right:8px}
+  .arrow{position:absolute;top:390px;right:-52px;font-size:22px;color:#B9B2A2}
+  .phone{width:375px;height:812px;background:var(--brand-cream);border:1px solid #CBC4B4;border-radius:48px;overflow:hidden;position:relative;box-shadow:0 12px 32px rgba(30,57,50,.12)}
+  .statusbar{height:30px;display:flex;justify-content:space-between;align-items:center;padding:0 18px;font-size:12px;color:rgba(247,244,238,.9)}
+  .scroll{height:calc(100% - 30px);overflow-y:auto;padding-bottom:96px}
+  .ico{width:20px;height:20px;display:inline-block;vertical-align:middle}
+  /* 企业头部 */
+  .ent-hd{background:var(--brand-deep);color:var(--brand-cream);padding:16px 20px 20px}
+  .ent-hd .who{font-size:12px;color:rgba(247,244,238,.72);display:flex;align-items:center;gap:6px}
+  .ent-hd .who .bdg{border:1px solid rgba(247,244,238,.45);border-radius:6px;padding:1px 7px;font-size:12px;letter-spacing:1px}
+  .ent-hd .co{font-size:20px;font-weight:600;margin-top:6px}
+  .ent-hd .meta{font-size:12px;color:rgba(247,244,238,.72);margin-top:6px}
+  .ent-hd .meta b{color:var(--brand-cream);font-weight:600}
+  .sec{background:#fff;border-radius:12px;margin:12px 20px 0;padding:16px;box-shadow:var(--shadow-card)}
+  .sec-t{font-size:16px;color:var(--text-primary);font-weight:600;border-left:3px solid var(--brand-green);padding-left:9px;margin-bottom:10px;display:flex;align-items:center}
+  .sec-t small{font-size:12px;color:var(--text-secondary);font-weight:400;margin-left:8px}
+  /* 数据钉 */
+  .pins{display:flex;gap:10px;margin:-24px 20px 0;position:relative;z-index:2}
+  .pin{flex:1;background:#fff;border-radius:12px;box-shadow:0 8px 20px rgba(30,57,50,.10);padding:13px 8px 11px;text-align:center}
+  .pin .v{font-size:16px;font-weight:600;color:var(--brand-deep);font-variant-numeric:tabular-nums}
+  .pin .v.gold{color:var(--accent-gold);font-size:20px}
+  .pin .k{font-size:12px;color:var(--text-secondary);margin-top:5px}
+  /* 申请列表 */
+  .tabs{display:flex;gap:8px;padding:12px 20px 2px;font-size:12px}
+  .tabs span{border:1px solid var(--divider);color:var(--text-secondary);border-radius:999px;padding:5px 13px;background:#fff}
+  .tabs b{border:1px solid var(--brand-green);color:var(--brand-green);border-radius:999px;padding:5px 13px;background:rgba(0,98,65,.05);font-weight:600}
+  .ap{background:#fff;border-radius:12px;margin:10px 20px 0;padding:14px 16px;box-shadow:var(--shadow-card)}
+  .ap .r1{display:flex;justify-content:space-between;align-items:center}
+  .ap .r1 b{font-size:14px;color:var(--text-primary);font-weight:600}
+  .ap .r1 .amt{color:var(--accent-gold);font-weight:600;font-variant-numeric:tabular-nums}
+  .ap .r2{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:12px;color:var(--text-secondary)}
+  .pill{display:inline-block;font-size:12px;border-radius:999px;padding:2px 10px}
+  .pill.doing{color:var(--st-ongoing);background:rgba(61,122,95,.10)}
+  .pill.wait{color:var(--st-pending);background:rgba(168,123,47,.10)}
+  .pill.done{color:var(--text-secondary);background:#EFEBE0}
+  .pill.err{color:var(--st-error);background:rgba(165,72,61,.10)}
+  /* 账单 */
+  .axis{display:flex;background:#EFEBE0;border-radius:999px;margin:0 20px;padding:3px;font-size:14px;color:var(--text-secondary)}
+  .axis div{flex:1;text-align:center;padding:7px 0;border-radius:999px}
+  .axis .on{background:var(--brand-green);color:var(--brand-cream);font-weight:600}
+  .sum{display:flex;gap:10px;margin:12px 20px 0}
+  .sum .pin{box-shadow:var(--shadow-card)}
+  .bars{display:flex;align-items:flex-end;gap:9px;height:110px;padding:4px 4px 0;border-bottom:1px solid var(--divider)}
+  .bars div{flex:1;background:rgba(0,98,65,.30);border-radius:5px 5px 0 0}
+  .bars div.hi{background:var(--brand-green)}
+  .bars-x{display:flex;gap:9px;padding:7px 4px 0;font-size:12px;color:var(--text-secondary)}
+  .bars-x span{flex:1;text-align:center}
+  .bill-row{display:flex;justify-content:space-between;font-size:14px;color:var(--text-secondary);padding:10px 0;border-bottom:1px solid #F0EBE0}
+  .bill-row:last-child{border-bottom:none}
+  .bill-row b{color:var(--text-primary);font-weight:400}
+  .bill-row .amt{font-variant-numeric:tabular-nums;color:var(--text-primary)}
+  /* 余额 */
+  .bal-card{background:var(--brand-deep);border-radius:12px;margin:-24px 20px 0;padding:20px;color:var(--brand-cream);position:relative;z-index:2;box-shadow:0 10px 24px rgba(30,57,50,.18)}
+  .bal-card .lb{font-size:12px;color:rgba(247,244,238,.72)}
+  .bal-card .num{font-size:32px;font-weight:600;margin-top:6px;font-variant-numeric:tabular-nums;letter-spacing:-.5px}
+  .bal-card .row{display:flex;justify-content:space-between;align-items:flex-end}
+  .bal-card .pt{text-align:right;font-size:12px;color:rgba(247,244,238,.72)}
+  .bal-card .pt b{display:block;font-size:18px;color:var(--brand-cream);font-variant-numeric:tabular-nums}
+  .qr{background:#fff;border-radius:12px;margin:12px 20px 0;padding:18px;box-shadow:var(--shadow-card);text-align:center}
+  .qr .box{width:168px;height:168px;margin:8px auto 12px;border-radius:12px;border:1px solid var(--divider);
+    background:
+      linear-gradient(90deg,var(--brand-deep) 10px,transparent 0) 12px 12px/34px 34px,
+      linear-gradient(var(--brand-deep) 10px,transparent 0) 12px 12px/34px 34px,
+      repeating-linear-gradient(45deg,#fff 0 8px,#EFEBE0 8px 16px);
+    position:relative}
+  .qr .box::after{content:"对公转账";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:var(--brand-green);color:var(--brand-cream);font-size:12px;border-radius:8px;padding:5px 12px;letter-spacing:2px}
+  .qr .tip{font-size:12px;color:var(--text-secondary);line-height:1.9}
+  .qr .tip b{color:var(--st-pending);font-weight:600}
+  .bottom-bar{position:absolute;bottom:0;left:0;right:0;background:rgba(255,255,255,.96);border-top:1px solid var(--divider);padding:12px 20px 16px;display:flex;gap:12px}
+  .btn-line{flex:1;text-align:center;font-size:14px;color:var(--brand-green);border:1.5px solid rgba(0,98,65,.4);border-radius:999px;padding:12px 0;font-weight:600}
+  .btn-main{flex:1;background:var(--brand-green);color:var(--brand-cream);border-radius:999px;text-align:center;font-size:14px;padding:12px 0;font-weight:600;letter-spacing:1px}
+  .rec{display:flex;justify-content:space-between;font-size:14px;color:var(--text-secondary);padding:10px 0;border-bottom:1px solid #F0EBE0}
+  .rec:last-child{border-bottom:none}
+  .rec b{color:var(--st-ongoing);font-weight:600;font-variant-numeric:tabular-nums}
+  .rec .pending{color:var(--st-pending)}
+</style>
+</head>
+<body>
+
+<div class="page-title">企业管理员工作台</div>
+<div class="page-sub">全企业申请、整体账单、余额与充值</div>
+
+<div class="flow">
+  <!-- 屏1：全企业申请 -->
+  <div class="screen-wrap">
+    <div class="screen-label"><b>01</b>企业工作台首页</div>
+    <div class="phone">
+      <div class="statusbar" style="background:var(--brand-deep)"><span>9:41</span><span>‹ 返回</span><span>···</span></div>
+      <div class="scroll">
+        <div class="ent-hd" style="margin-top:-30px;padding-top:44px">
+          <div class="who"><span class="bdg">企业管理员</span>王敏 · 139****5678</div>
+          <div class="co">星辰科技集团</div>
+          <div class="meta">企业员工 <b>86 人</b> · 已绑定 <b>72 人</b> · 协议价方案 A</div>
+        </div>
+        <div class="pins" style="margin-top:14px">
+          <div class="pin"><div class="v">26</div><div class="k">本月申请</div></div>
+          <div class="pin"><div class="v">9</div><div class="k">办理中</div></div>
+          <div class="pin"><div class="v gold">¥48,320</div><div class="k">本月消费</div></div>
+        </div>
+        <div class="tabs"><b>全部</b><span>办理中 9</span><span>待补充 2</span><span>已完成 14</span><span>已退款 1</span></div>
+        <div class="ap">
+          <div class="r1"><b>陈明 · 美国 B1/B2</b><span class="amt">¥1,895</span></div>
+          <div class="r2"><span>08-04 下单 · 订单 V20260804012</span><span class="pill doing">领馆受理</span></div>
+        </div>
+        <div class="ap">
+          <div class="r1"><b>刘洋 · 英国旅游签</b><span class="amt">¥1,580</span></div>
+          <div class="r2"><span>08-04 下单 · 订单 V20260804031</span><span class="pill doing">已送签</span></div>
+        </div>
+        <div class="ap">
+          <div class="r1"><b>王倩 · 法国申根签</b><span class="amt">¥1,290</span></div>
+          <div class="r2"><span>08-03 下单 · 订单 V20260803008</span><span class="pill wait">待补充材料</span></div>
+        </div>
+        <div class="ap">
+          <div class="r1"><b>陈晨 · 日本三年多次</b><span class="amt">¥899</span></div>
+          <div class="r2"><span>08-02 下单 · 订单 V20260802019</span><span class="pill done">已完成</span></div>
+        </div>
+        <div class="ap">
+          <div class="r1"><b>赵一鸣 · 澳大利亚 600</b><span class="amt">¥1,350</span></div>
+          <div class="r2"><span>08-01 下单 · 订单 V20260801026</span><span class="pill err">拒签·售后中</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="arrow">→</div>
+  </div>
+
+  <!-- 屏2：整体账单 -->
+  <div class="screen-wrap">
+    <div class="screen-label"><b>02</b>整体账单</div>
+    <div class="phone">
+      <div class="statusbar" style="background:var(--brand-deep)"><span>9:41</span><span>‹ 返回</span><span>···</span></div>
+      <div class="scroll">
+        <div class="ent-hd" style="margin-top:-30px;padding-top:44px">
+          <div class="who"><span class="bdg">企业管理员</span>整体账单</div>
+          <div class="co">消费总览</div>
+          <div class="meta">时间轴可自由选择：<b>日 / 周 / 月 / 全部</b></div>
+        </div>
+        <div class="axis" style="margin-top:14px"><div>日</div><div>周</div><div class="on">月</div><div>全部</div></div>
+        <div class="sum">
+          <div class="pin"><div class="v">26</div><div class="k">订单数</div></div>
+          <div class="pin"><div class="v gold">¥48,320</div><div class="k">消费</div></div>
+          <div class="pin"><div class="v">¥1,895</div><div class="k">退款</div></div>
+          <div class="pin"><div class="v">¥46,425</div><div class="k">净消费</div></div>
+        </div>
+        <div class="sec">
+          <div class="sec-t">近 6 月消费趋势</div>
+          <div class="bars"><div style="height:38%"></div><div style="height:52%"></div><div style="height:46%"></div><div style="height:68%"></div><div style="height:58%"></div><div class="hi" style="height:86%"></div></div>
+          <div class="bars-x"><span>3月</span><span>4月</span><span>5月</span><span>6月</span><span>7月</span><span>8月</span></div>
+        </div>
+        <div class="sec">
+          <div class="sec-t">账单明细 <small>2026-08（月视图）</small></div>
+          <div class="bill-row"><span>08-04 · 陈明 等 2 单</span><span class="amt">-¥3,475</span></div>
+          <div class="bill-row"><span>08-03 · 王倩 法国申根</span><span class="amt">-¥1,290</span></div>
+          <div class="bill-row"><span>08-03 · 对公充值入账</span><span class="amt" style="color:var(--st-ongoing)">+¥20,000</span></div>
+          <div class="bill-row"><span>08-02 · 陈晨 日本签证</span><span class="amt">-¥899</span></div>
+          <div class="bill-row"><span>08-01 · 退款（赵一鸣订单取消）</span><span class="amt" style="color:var(--st-ongoing)">+¥1,895</span></div>
+        </div>
+      </div>
+      <div class="bottom-bar">
+        <div class="btn-line">发送至邮箱</div>
+        <div class="btn-main">导出账单（Excel）</div>
+      </div>
+    </div>
+    <div class="arrow">→</div>
+  </div>
+
+  <!-- 屏3：余额/充值/积分 -->
+  <div class="screen-wrap">
+    <div class="screen-label"><b>03</b>余额与充值</div>
+    <div class="phone">
+      <div class="statusbar" style="background:var(--brand-deep)"><span>9:41</span><span>‹ 返回</span><span>···</span></div>
+      <div class="scroll">
+        <div class="ent-hd" style="margin-top:-30px;padding-top:44px">
+          <div class="who"><span class="bdg">企业管理员</span>账户资产</div>
+          <div class="co">余额 · 充值 · 积分</div>
+        </div>
+        <div class="bal-card">
+          <div class="row">
+            <div><div class="lb">企业可用余额（元）</div><div class="num">86,500.00</div></div>
+            <div class="pt">积分余额<b>12,300</b></div>
+          </div>
+        </div>
+        <div class="qr">
+          <div class="sec-t" style="text-align:left">对公充值 <small>扫码转账至平台对公账户</small></div>
+          <div class="box"></div>
+          <div class="tip">请使用<b>企业对公账户</b>转账并备注企业名称<br>财务确认到账后余额实时生效（通常 1 个工作日内）</div>
+        </div>
+        <div class="sec">
+          <div class="sec-t">充值与积分记录</div>
+          <div class="rec"><span>08-03 · 对公转账充值</span><b>+¥20,000</b></div>
+          <div class="rec"><span>08-03 · 充值 <span class="pending">（银行到账核对中）</span></span><b class="pending">¥30,000 待确认</b></div>
+          <div class="rec"><span>07-28 · 消费积分发放</span><b>+483</b></div>
+          <div class="rec"><span>07-15 · 对公转账充值</span><b>+¥50,000</b></div>
+        </div>
+      </div>
+      <div class="bottom-bar">
+        <div class="btn-main" style="flex:1">我已转账，提交充值凭证</div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

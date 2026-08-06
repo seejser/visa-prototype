@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>订单详情 · 供应商工作台</title>
+<style>
+  :root{
+    --brand-green:#006241; --brand-deep:#1E3932; --brand-cream:#F7F4EE;
+    --accent-gold:#CBA258; --travel-blue:#2577E3;
+    --text-primary:#1E3932; --text-secondary:#6B7B74; --divider:#E8E3D8;
+    --st-doing:#3D7A5F; --st-wait:#A87B2F; --st-err:#A5483D;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+  body{background:#ECE7DC;padding:30px;font-size:14px;color:var(--text-primary)}
+  .ic{width:18px;height:18px;flex-shrink:0}
+  .page-title{font-size:20px;color:var(--brand-deep);font-weight:600;margin-bottom:6px}
+  .page-sub{font-size:12px;color:var(--text-secondary);margin-bottom:20px}
+  .page-sub a{color:var(--brand-green);text-decoration:none}
+  .frame{width:1440px;height:900px;background:var(--brand-cream);border-radius:12px;overflow:hidden;display:flex;box-shadow:0 12px 40px rgba(30,57,50,.14)}
+  .side{width:220px;background:var(--brand-deep);color:var(--brand-cream);flex-shrink:0;display:flex;flex-direction:column}
+  .side .logo{height:64px;display:flex;align-items:center;gap:12px;padding:0 20px;font-size:15px;font-weight:600;color:var(--brand-cream);border-bottom:1px solid rgba(247,244,238,.12)}
+  .side .logo .dot{width:28px;height:28px;border-radius:50%;background:var(--brand-green);display:flex;align-items:center;justify-content:center;color:var(--brand-cream)}
+  .side .logo .dot .ic{width:15px;height:15px}
+  .side .nav{padding:12px 0;font-size:14px}
+  .side .nav div,.side .nav a{height:40px;display:flex;align-items:center;gap:12px;padding:0 16px;margin:2px 0;cursor:pointer;color:rgba(247,244,238,.72);border-left:3px solid transparent;transition:background .15s;text-decoration:none;font-size:14px}
+  .side .nav div:hover,.side .nav a:hover{background:rgba(247,244,238,.06);color:var(--brand-cream)}
+  .side .nav .on{background:rgba(247,244,238,.08);color:var(--brand-cream);border-left:3px solid var(--brand-cream);font-weight:600}
+  .side .ft{margin-top:auto;padding:16px 20px;font-size:12px;color:rgba(247,244,238,.4);border-top:1px solid rgba(247,244,238,.12)}
+  .main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+  .topbar{height:64px;background:#fff;border-bottom:1px solid var(--divider);display:flex;align-items:center;padding:0 24px;font-size:14px;color:var(--text-secondary)}
+  .crumb b{color:var(--text-primary);font-weight:600}
+  .crumb .ord{font-size:12px;color:#9AA79F;margin-left:8px;font-variant-numeric:tabular-nums}
+  .topbar .user{margin-left:auto;display:flex;align-items:center;gap:12px;font-size:14px;color:var(--text-primary)}
+  .topbar .bell{position:relative;cursor:pointer;color:var(--text-secondary);display:flex}
+  .topbar .bell i{position:absolute;top:-6px;right:-9px;background:var(--brand-green);color:#fff;border-radius:8px;font-size:12px;padding:0 5px;font-style:normal;transform:scale(.85)}
+  .topbar .avatar{width:32px;height:32px;border-radius:50%;background:var(--brand-green);color:var(--brand-cream);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600}
+  .content{flex:1;padding:20px;overflow:auto}
+  .card{background:#fff;border:1px solid var(--divider);border-radius:12px;padding:16px;margin-bottom:12px}
+  .card-t{font-size:16px;font-weight:600;color:var(--brand-deep);padding-left:10px;border-left:3px solid var(--brand-green);margin-bottom:16px;display:flex;align-items:center}
+  .card-t small{font-size:12px;color:var(--text-secondary);font-weight:400;margin-left:10px}
+  .cols{display:grid;grid-template-columns:1.5fr 1fr;gap:12px;align-items:start}
+  .btn{background:var(--brand-green);color:#fff;border-radius:999px;font-size:14px;padding:8px 22px;border:none;cursor:pointer}
+  .btn-line{border:1px solid var(--divider);background:#fff;color:var(--text-secondary);border-radius:999px;font-size:14px;padding:8px 18px;cursor:pointer}
+  .kv{display:flex;font-size:14px;padding:8px 0;border-bottom:1px dashed var(--divider)}
+  .kv span:first-child{width:96px;color:var(--text-secondary);flex-shrink:0;font-size:12px;align-self:center}
+  .kv span:last-child{color:var(--text-primary)}
+  .mono{font-variant-numeric:tabular-nums}
+  .amt{font-weight:600;color:var(--accent-gold);font-variant-numeric:tabular-nums}
+  /* 状态胶囊：浅色底 + 深字 */
+  .tag{display:inline-block;border-radius:6px;font-size:12px;padding:2px 10px}
+  .t-doing{background:#E9F1ED;color:var(--st-doing)}
+  .t-wait{background:#F5EEDF;color:var(--st-wait)}
+  .t-gray{background:#EFEDE7;color:var(--text-secondary)}
+  /* ===== 航线图时间轴（核心隐喻） ===== */
+  .route{display:flex;align-items:flex-start;padding:10px 8px 4px}
+  .stop{flex:0 0 auto;width:150px;text-align:center;position:relative}
+  .stop .pt{width:40px;height:40px;border-radius:50%;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:15px;position:relative;z-index:2}
+  .stop.done .pt{background:var(--brand-green);color:#fff;box-shadow:0 0 0 4px rgba(0,98,65,.12)}
+  .stop.now .pt{background:#fff;border:2px solid var(--brand-green);color:var(--brand-green);box-shadow:0 0 0 6px rgba(0,98,65,.10)}
+  .stop.now .pt .ic{width:16px;height:16px}
+  .stop.todo .pt{background:#fff;border:2px dashed #C9C2B2;color:#B7AE9B}
+  .stop .nm{font-size:14px;font-weight:600;color:var(--brand-deep);margin-top:10px}
+  .stop.todo .nm{color:#A9A294}
+  .stop .tm{font-size:12px;color:var(--text-secondary);margin-top:4px;line-height:1.6}
+  .stop.now .nm{color:var(--brand-green)}
+  .seg{flex:1;height:0;border-top:2px solid var(--brand-green);margin-top:20px;position:relative;z-index:1}
+  .seg.dashed{border-top:2px dashed #C9C2B2}
+  /* ===== 材料审核 checklist 卡片 ===== */
+  .chk{border:1px solid var(--divider);border-radius:12px;padding:14px 16px;margin-bottom:12px;display:flex;gap:14px;align-items:flex-start;transition:border-color .15s}
+  .chk:hover{border-color:var(--brand-green)}
+  .chk .thumb{width:72px;height:50px;border-radius:8px;flex-shrink:0;background:repeating-linear-gradient(45deg,#F1EDE3,#F1EDE3 8px,#F8F5EE 8px,#F8F5EE 16px);border:1px solid var(--divider);display:flex;align-items:center;justify-content:center;color:#B7AE9B;font-size:12px}
+  .chk .mid{flex:1}
+  .chk .nm{font-size:14px;font-weight:600;color:var(--brand-deep);display:flex;align-items:center;gap:8px}
+  .chk .memo{font-size:12px;color:var(--st-wait);background:#F5EEDF;border-radius:6px;padding:6px 10px;margin-top:8px;display:none}
+  .chk.rejected .memo{display:block}
+  .chk .remark{width:100%;border:1px solid var(--divider);border-radius:8px;background:var(--brand-cream);font-size:12px;color:var(--text-secondary);padding:8px 12px;margin-top:8px;display:none;font-family:inherit}
+  .chk.rejected .remark{display:block}
+  .chk .acts{display:flex;gap:8px;flex-shrink:0;padding-top:2px}
+  .act-ok{width:32px;height:32px;border-radius:50%;border:1px solid #CBE0D6;background:#E9F1ED;color:var(--st-doing);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .act-ok.sel{background:var(--st-doing);color:#fff;border-color:var(--st-doing)}
+  .act-no{width:32px;height:32px;border-radius:50%;border:1px solid #E7D6BC;background:#F5EEDF;color:var(--st-wait);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .act-no.sel{background:var(--st-wait);color:#fff;border-color:var(--st-wait)}
+  .tabs-sm{display:flex;font-size:14px;color:var(--text-secondary);border-bottom:1px solid var(--divider);margin-bottom:14px}
+  .tabs-sm span{padding:9px 16px;cursor:pointer;border-bottom:2px solid transparent}
+  .tabs-sm span.on{color:var(--brand-green);border-bottom:2px solid var(--brand-green);font-weight:600}
+  .ipt{border:1px solid var(--divider);border-radius:999px;background:var(--brand-cream);color:#9AA79F;font-size:14px;padding:8px 16px;width:100%}
+  .up-box{height:120px;border:2px dashed #C9C2B2;border-radius:12px;color:#B7AE9B;font-size:12px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;background:var(--brand-cream)}
+  .up-box .ic{width:22px;height:22px}
+  .log{font-size:12px;color:var(--text-secondary);line-height:2.1}
+  .log b{color:var(--brand-deep);font-weight:600}
+  .log .dotline{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--brand-green);margin-right:8px;opacity:.35}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-plane" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></symbol>
+    <symbol id="i-order" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2.5H6.5A1.5 1.5 0 0 0 5 4v16a1.5 1.5 0 0 0 1.5 1.5h11A1.5 1.5 0 0 0 19 20V7.5z"/><path d="M14 2.5v5h5"/><path d="M8.5 12.5h7M8.5 16h7"/></symbol>
+    <symbol id="i-finance" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5.5" width="18" height="13.5" rx="2"/><path d="M3 10h18"/><path d="M7 14.5h4"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 9.5a6 6 0 1 0-12 0c0 5-1.8 6.2-1.8 6.2h15.6S18 14.5 18 9.5"/><path d="M10.2 19a2 2 0 0 0 3.6 0"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5.5 19.5c.8-3.2 3.4-4.8 6.5-4.8s5.7 1.6 6.5 4.8"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8a1.5 1.5 0 0 1 1.5-1.5h2.2L9.2 4.5h5.6l1.5 2h2.2A1.5 1.5 0 0 1 20 8v9.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5z"/><circle cx="12" cy="12.6" r="3.2"/></symbol>
+  </defs>
+</svg>
+<div class="page-title">订单处理详情</div>
+<div class="page-sub">材料审核 checklist（通过 / 驳回+备注） / 办签进度「航线图」 / 出签结果录入 + 回寄物流单号 · <a href="s-orders.html">返回订单列表</a></div>
+
+<div class="frame">
+  <div class="side">
+    <div class="logo"><span class="dot"><svg class="ic"><use href="#i-plane"/></svg></span>供应商工作台</div>
+    <div class="nav">
+      <div class="on"><svg class="ic"><use href="#i-order"/></svg>订单管理</div>
+      <div><svg class="ic"><use href="#i-finance"/></svg>结算对账</div>
+      <div><svg class="ic"><use href="#i-bell"/></svg>消息</div>
+      <div><svg class="ic"><use href="#i-user"/></svg>账号</div>
+    </div>
+    <div class="ft">环球驿站 · 供应商工作台</div>
+  </div>
+  <div class="main">
+    <div class="topbar">
+      <span class="crumb">工作台 / 订单管理 / <b>订单详情</b><span class="ord">V202608030031</span></span>
+      <div class="user"><span class="bell"><svg class="ic"><use href="#i-bell"/></svg><i>3</i></span><div class="avatar">XX</div><span>环球签证服务中心（操作员）</span></div>
+    </div>
+    <div class="content">
+      <!-- 订单概要 -->
+      <div class="card">
+        <div class="card-t">订单信息 <span class="tag t-doing" style="margin-left:10px">材料审核中</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 36px">
+          <div class="kv"><span>订单号</span><span class="mono">V202608030031</span></div>
+          <div class="kv"><span>产品</span><span>韩国 · 五年多次签证</span></div>
+          <div class="kv"><span>预计出行</span><span class="mono">2026-09-05</span></div>
+          <div class="kv"><span>人数</span><span>3 人（陈明 / 李婷 / 王浩）</span></div>
+          <div class="kv"><span>金额</span><span class="amt">¥2,370</span><span style="color:var(--text-secondary);font-size:12px;align-self:center;margin-left:6px">（结算价 ¥1,950）</span></div>
+          <div class="kv"><span>下单时间</span><span class="mono">2026-08-03 17:05</span></div>
+        </div>
+      </div>
+
+      <!-- 办签进度 · 航线图 -->
+      <div class="card">
+        <div class="card-t">办签进度 · 航线图<small>已飞段落实线 · 未飞段落虚线 · 飞机为当前经停点</small></div>
+        <div class="route">
+          <div class="stop done">
+            <div class="pt">✓</div>
+            <div class="nm">下单</div>
+            <div class="tm">08-03 17:05<br>用户已支付</div>
+          </div>
+          <div class="seg"></div>
+          <div class="stop now">
+            <div class="pt"><svg class="ic"><use href="#i-plane"/></svg></div>
+            <div class="nm">材料审核</div>
+            <div class="tm">当前节点<br>银行流水待补充</div>
+          </div>
+          <div class="seg dashed"></div>
+          <div class="stop todo">
+            <div class="pt">◦</div>
+            <div class="nm">使领馆</div>
+            <div class="tm">预计 5-7 个工作日</div>
+          </div>
+          <div class="seg dashed"></div>
+          <div class="stop todo">
+            <div class="pt">◦</div>
+            <div class="nm">出签</div>
+            <div class="tm">录入结果 + 签证页</div>
+          </div>
+          <div class="seg dashed"></div>
+          <div class="stop todo">
+            <div class="pt">◦</div>
+            <div class="nm">寄回</div>
+            <div class="tm">顺丰物流单号</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cols">
+        <!-- 左：材料审核 + 出签录入 -->
+        <div>
+          <div class="card">
+            <div class="card-t">申请人材料审核<small>逐项 checklist：✓ 通过 / ✕ 驳回并填写备注</small></div>
+            <div class="tabs-sm"><span class="on">陈明</span><span>李婷</span><span>王浩</span></div>
+
+            <div class="chk passed">
+              <div class="thumb">护照首页</div>
+              <div class="mid">
+                <div class="nm">护照首页 <span class="tag t-doing">已通过</span></div>
+              </div>
+              <div class="acts"><button class="act-ok sel" title="通过">✓</button><button class="act-no" title="驳回">✕</button></div>
+            </div>
+            <div class="chk passed">
+              <div class="thumb">证件照</div>
+              <div class="mid">
+                <div class="nm">证件照 <span class="tag t-doing">已通过</span></div>
+              </div>
+              <div class="acts"><button class="act-ok sel" title="通过">✓</button><button class="act-no" title="驳回">✕</button></div>
+            </div>
+            <div class="chk rejected">
+              <div class="thumb">银行流水</div>
+              <div class="mid">
+                <div class="nm">银行流水 <span class="tag t-wait">已驳回</span></div>
+                <div class="memo">驳回备注：流水不足 6 个月，请补充 2026-02 之后的记录</div>
+                <input class="remark" value="流水不足 6 个月，请补充 2026-02 之后的记录">
+              </div>
+              <div class="acts"><button class="act-ok" title="通过">✓</button><button class="act-no sel" title="驳回">✕</button></div>
+            </div>
+            <div class="chk">
+              <div class="thumb">在职证明</div>
+              <div class="mid">
+                <div class="nm">在职证明 <span class="tag t-gray">待审核</span></div>
+                <input class="remark" placeholder="请输入驳回原因" style="display:block">
+              </div>
+              <div class="acts"><button class="act-ok" title="通过">✓</button><button class="act-no" title="驳回">✕</button></div>
+            </div>
+
+            <div style="margin-top:16px;text-align:right">
+              <button class="btn-line">材料驳回（通知用户补充）</button>
+              <button class="btn">全部通过 · 进入送签</button>
+            </div>
+          </div>
+
+          <!-- 出签结果录入 -->
+          <div class="card">
+            <div class="card-t">出签结果录入</div>
+            <div style="display:flex;gap:16px">
+              <div class="up-box" style="flex:1"><svg class="ic"><use href="#i-camera"/></svg>上传签证页照片<span style="font-size:12px">支持拍照 / 相册上传</span></div>
+              <div style="flex:1;display:flex;flex-direction:column;gap:12px">
+                <div class="ipt">出签结果：通过 / 拒签 ▾</div>
+                <div class="ipt">签证有效期：起 - 止</div>
+                <div class="ipt">回寄物流单号（顺丰 SF________）</div>
+                <button class="btn" style="align-self:flex-end">提交出签结果</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 右：操作记录 -->
+        <div>
+          <div class="card">
+            <div class="card-t">操作记录</div>
+            <div class="log">
+              <span class="dotline"></span><b>08-04 11:02</b>　驳回「银行流水」（张敏）<br>
+              <span class="dotline"></span><b>08-04 10:30</b>　确认收到材料（张敏）<br>
+              <span class="dotline"></span><b>08-03 18:20</b>　接单（刘洋）<br>
+              <span class="dotline"></span><b>08-03 17:05</b>　用户支付成功（系统）
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-t">进度操作</div>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div class="ipt">更新至节点：材料审核完成 ▾</div>
+              <button class="btn" style="width:100%">更新进度节点</button>
+              <button class="btn-line" style="width:100%">标记异常（材料驳回 / 超时）</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+document.querySelectorAll('.tabs-sm span').forEach(function(s){
+  s.addEventListener('click',function(){
+    s.parentNode.querySelectorAll('span').forEach(function(x){x.classList.remove('on')});
+    s.classList.add('on');
+  });
+});
+/* checklist：✓ / ✕ 互斥选择，✕ 时展开备注 */
+document.querySelectorAll('.chk').forEach(function(chk){
+  var ok=chk.querySelector('.act-ok'), no=chk.querySelector('.act-no'), remark=chk.querySelector('.remark');
+  ok.addEventListener('click',function(){
+    ok.classList.add('sel'); no.classList.remove('sel');
+    chk.classList.remove('rejected');
+    if(remark) remark.style.display='block';
+  });
+  no.addEventListener('click',function(){
+    no.classList.add('sel'); ok.classList.remove('sel');
+    chk.classList.add('rejected');
+    if(remark){ remark.style.display='block'; remark.focus(); }
+  });
+});
+</script>
+</body>
+</html>
